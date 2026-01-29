@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Academia - Alunos</title>
+    <style>
+        :root {
+            --primary: #007bff;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #e0e0e0;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+        .container { max-width: 900px; margin: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
+        
+        .loading { text-align: center; padding: 40px; color: #888; }
+        
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        th { background: #252525; color: var(--primary); padding: 15px; text-align: left; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        td { padding: 15px; border-bottom: 1px solid #333; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #262626; }
+        
+        .badge { background: rgba(0, 123, 255, 0.2); color: var(--primary); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; }
+        .price { font-family: monospace; font-size: 1.1rem; color: #28a745; }
+        
+        .error-box { background: #441111; color: #ff9999; padding: 15px; border-radius: 5px; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Gestão de Alunos</h1>
+        <button onclick="buscarDados()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 4px; cursor: pointer;">Atualizar</button>
+    </header>
+
+    <div id="erro" class="error-box"></div>
+    
+    <div id="carregando" class="loading">A carregar matrículas...</div>
+
+    <table id="tabela-alunos" style="display: none;">
+        <thead>
+            <tr>
+                <th>Nome do Aluno</th>
+                <th>CPF</th>
+                <th>Tempo</th>
+                <th>Mensalidade</th>
+            </tr>
+        </thead>
+        <tbody id="lista-corpo"></tbody>
+    </table>
+</div>
+
+<script>
+    // URL da tua API no Ngrok
+    const API_URL = 'https://2e7415640551.ngrok-free.app/api.php';
+
+    async function buscarDados() {
+        const loading = document.getElementById('carregando');
+        const tabela = document.getElementById('tabela-alunos');
+        const corpo = document.getElementById('lista-corpo');
+        const erroBox = document.getElementById('erro');
+
+        try {
+            const resposta = await fetch(`${API_URL}?action=listar_alunos`, {
+                method: 'GET',
+                headers: { 'ngrok-skip-browser-warning': 'true' }
+            });
+
+            if (!resposta.ok) throw new Error("Servidor offline ou link expirado.");
+
+            const json = await resposta.json();
+
+            if (json.status === 'success') {
+                loading.style.display = 'none';
+                erroBox.style.display = 'none';
+                tabela.style.display = 'table';
+                
+                if (json.data.length === 0) {
+                    corpo.innerHTML = "<tr><td colspan='4' style='text-align:center'>Nenhum aluno registado.</td></tr>";
+                    return;
+                }
+
+                corpo.innerHTML = json.data.map(aluno => `
+                    <tr>
+                        <td><strong>${aluno.nome}</strong></td>
+                        <td>${aluno.cpf}</td>
+                        <td><span class="badge">${aluno.meses_na_academia} meses</span></td>
+                        <td class="price">R$ ${parseFloat(aluno.mensalidade).toFixed(2)}</td>
+                    </tr>
+                `).join('');
+            }
+        } catch (erro) {
+            loading.style.display = 'none';
+            erroBox.style.display = 'block';
+            erroBox.innerText = erro.message;
+        }
+    }
+
+    // Carrega automaticamente ao abrir a página
+    window.onload = buscarDados;
+</script>
+
+</body>
+</html>
