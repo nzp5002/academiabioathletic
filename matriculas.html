@@ -3,89 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Academia - Alunos</title>
+    <title>Academia - Painel de Controle</title>
     <style>
         :root {
             --primary: #007bff;
+            --success: #28a745;
             --bg: #121212;
             --card: #1e1e1e;
             --text: #e0e0e0;
         }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
         .container { max-width: 900px; margin: auto; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
-        h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
         
-        .loading { text-align: center; padding: 40px; color: #888; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px; }
         
-        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        /* Card de Cadastro */
+        .card { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 30px; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        input { background: #2c2c2c; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; font-size: 1rem; }
+        button { padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-add { background: var(--success); color: white; width: 100%; }
+        .btn-add:hover { background: #218838; }
+        
+        /* Tabela */
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
         th { background: #252525; color: var(--primary); padding: 15px; text-align: left; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
         td { padding: 15px; border-bottom: 1px solid #333; }
-        tr:last-child td { border-bottom: none; }
         tr:hover { background: #262626; }
+        .badge { background: rgba(0, 123, 255, 0.2); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; }
+        .price { color: #28a745; font-weight: bold; }
         
-        .badge { background: rgba(0, 123, 255, 0.2); color: var(--primary); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; }
-        .price { font-family: monospace; font-size: 1.1rem; color: #28a745; }
-        
-        .error-box { background: #441111; color: #ff9999; padding: 15px; border-radius: 5px; text-align: center; display: none; }
+        .error-box { background: #441111; color: #ff9999; padding: 10px; border-radius: 6px; margin-bottom: 20px; display: none; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
+    <div class="header">
         <h1>Gestão de Alunos</h1>
-        <button onclick="buscarDados()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 4px; cursor: pointer;">Atualizar</button>
-    </header>
+        <button onclick="buscarAlunos()" style="background: transparent; color: var(--primary); border: 1px solid var(--primary);">🔄 Atualizar Lista</button>
+    </div>
 
-    <div id="erro" class="error-box"></div>
-    
-    <div id="carregando" class="loading">A carregar matrículas...</div>
+    <div id="erro-alerta" class="error-box"></div>
 
-    <table id="tabela-alunos" style="display: none;">
+    <div class="card">
+        <h3 style="margin-top:0; color: var(--success)">✨ Nova Matrícula</h3>
+        <div class="grid-inputs">
+            <input type="text" id="nome" placeholder="Nome Completo">
+            <input type="text" id="cpf" placeholder="CPF">
+            <input type="number" id="valor" placeholder="Mensalidade (R$)">
+        </div>
+        <button class="btn-add" onclick="cadastrar()">MATRICULAR ALUNO</button>
+    </div>
+
+    <table>
         <thead>
             <tr>
-                <th>Nome do Aluno</th>
+                <th>Aluno</th>
                 <th>CPF</th>
                 <th>Tempo</th>
-                <th>Mensalidade</th>
+                <th>Valor</th>
             </tr>
         </thead>
-        <tbody id="lista-corpo"></tbody>
+        <tbody id="corpo-tabela">
+            <tr><td colspan="4" style="text-align:center; color:#888;">Carregando dados do Termux...</td></tr>
+        </tbody>
     </table>
 </div>
 
 <script>
-    // URL da tua API no Ngrok
+    // URL ATUAL DO SEU NGROK
     const API_URL = 'https://2e7415640551.ngrok-free.app/api.php';
+    
+    // Header obrigatório para o Ngrok não bloquear o GitHub
+    const headersNgrok = { 'ngrok-skip-browser-warning': 'true' };
 
-    async function buscarDados() {
-        const loading = document.getElementById('carregando');
-        const tabela = document.getElementById('tabela-alunos');
-        const corpo = document.getElementById('lista-corpo');
-        const erroBox = document.getElementById('erro');
+    // Função para buscar alunos
+    async function buscarAlunos() {
+        const corpo = document.getElementById('corpo-tabela');
+        const erro = document.getElementById('erro-alerta');
 
         try {
             const resposta = await fetch(`${API_URL}?action=listar_alunos`, {
-                method: 'GET',
-                headers: { 'ngrok-skip-browser-warning': 'true' }
+                headers: headersNgrok
             });
+            const res = await resposta.json();
 
-            if (!resposta.ok) throw new Error("Servidor offline ou link expirado.");
-
-            const json = await resposta.json();
-
-            if (json.status === 'success') {
-                loading.style.display = 'none';
-                erroBox.style.display = 'none';
-                tabela.style.display = 'table';
-                
-                if (json.data.length === 0) {
-                    corpo.innerHTML = "<tr><td colspan='4' style='text-align:center'>Nenhum aluno registado.</td></tr>";
+            if (res.status === 'success') {
+                erro.style.display = 'none';
+                if (res.data.length === 0) {
+                    corpo.innerHTML = "<tr><td colspan='4' style='text-align:center'>Nenhum aluno encontrado.</td></tr>";
                     return;
                 }
-
-                corpo.innerHTML = json.data.map(aluno => `
+                corpo.innerHTML = res.data.map(aluno => `
                     <tr>
                         <td><strong>${aluno.nome}</strong></td>
                         <td>${aluno.cpf}</td>
@@ -94,15 +104,52 @@
                     </tr>
                 `).join('');
             }
-        } catch (erro) {
-            loading.style.display = 'none';
-            erroBox.style.display = 'block';
-            erroBox.innerText = erro.message;
+        } catch (e) {
+            erro.innerText = "❌ Erro: Verifique se o Ngrok e o PHP estão ativos no Termux.";
+            erro.style.display = 'block';
         }
     }
 
-    // Carrega automaticamente ao abrir a página
-    window.onload = buscarDados;
+    // Função para cadastrar aluno
+    async function cadastrar() {
+        const nome = document.getElementById('nome').value;
+        const cpf = document.getElementById('cpf').value;
+        const valor = document.getElementById('valor').value;
+
+        if (!nome || !cpf || !valor) {
+            alert("Preencha todos os campos!");
+            return;
+        }
+
+        const dados = new FormData();
+        dados.append('nome', nome);
+        dados.append('cpf', cpf);
+        dados.append('valor', valor);
+
+        try {
+            const resposta = await fetch(`${API_URL}?action=cadastrar_aluno`, {
+                method: 'POST',
+                body: dados,
+                headers: headersNgrok
+            });
+            const res = await resposta.json();
+
+            if (res.status === 'success') {
+                alert("Matrícula realizada!");
+                document.getElementById('nome').value = '';
+                document.getElementById('cpf').value = '';
+                document.getElementById('valor').value = '';
+                buscarAlunos(); // Recarrega a tabela
+            } else {
+                alert("Erro ao cadastrar.");
+            }
+        } catch (e) {
+            alert("Erro de conexão com o Termux.");
+        }
+    }
+
+    // Inicia a lista ao abrir
+    window.onload = buscarAlunos;
 </script>
 
 </body>
