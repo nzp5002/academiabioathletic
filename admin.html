@@ -34,6 +34,7 @@
         <h2>Login do Administrador</h2>
         <input type="text" id="adminNome" placeholder="Nome Completo">
         <input type="text" id="adminCpf" placeholder="CPF">
+        <input type="password" id="adminSenha" placeholder="Senha">
         <button id="btnLogin">Entrar</button>
         <div id="loginStatus"></div>
     </div>
@@ -76,12 +77,14 @@ const API_URL = 'https://apiphp-production-bce2.up.railway.app';
 document.getElementById('btnLogin').addEventListener('click', async () => {
     const nome = document.getElementById('adminNome').value.trim();
     const cpf = document.getElementById('adminCpf').value.trim();
+    const senha = document.getElementById('adminSenha').value;
 
-    if(!nome || !cpf) return alert('Preencha todos os campos');
+    if(!nome || !cpf || !senha) return alert('Preencha todos os campos');
 
     const fd = new FormData();
     fd.append('nome', nome);
     fd.append('cpf', cpf);
+    fd.append('senha', senha);
 
     try {
         const res = await fetch(`${API_URL}?action=login`, { method:'POST', body:fd });
