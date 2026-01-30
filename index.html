@@ -3,61 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academia - Acesso Restrito</title>
+    <title>Sistema Academia - Restrito</title>
     <style>
         :root { --p: #007bff; --s: #28a745; --bg: #121212; --c: #1e1e1e; --t: #eee; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--t); padding: 20px; }
-        .container { max-width: 600px; margin: auto; }
-        .card { background: var(--c); padding: 20px; border-radius: 8px; border: 1px solid #333; margin-bottom: 20px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; background: #2c2c2c; border: 1px solid #444; color: #fff; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--t); padding: 15px; margin: 0; }
+        .container { max-width: 700px; margin: auto; }
+        .card { background: var(--c); padding: 20px; border-radius: 8px; border: 1px solid #333; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        input { width: 100%; padding: 12px; margin: 8px 0; background: #2c2c2c; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .btn-login { background: var(--p); color: white; }
-        .btn-add { background: var(--s); color: white; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .btn-add { background: var(--s); color: white; margin-top: 10px; }
+        .btn-add:hover { background: #218838; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: var(--p); background: #252525; }
         .hidden { display: none; }
-        .error { color: #ff4444; font-size: 0.9rem; margin-bottom: 10px; text-align: center; }
+        .error { color: #ff4444; text-align: center; margin-bottom: 10px; font-weight: bold; }
+        .phone-link { color: #25d366; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="secao-login" class="card">
-        <h2 style="text-align: center; color: var(--p);">Login ADM</h2>
+        <h2 style="text-align: center; color: var(--p);">Acesso Administrativo</h2>
         <div id="login-erro" class="error"></div>
         <input type="text" id="adm-nome" placeholder="Nome do Administrador">
         <input type="text" id="adm-cpf" placeholder="CPF do Administrador">
-        <button class="btn-login" onclick="fazerLogin()">ACESSAR SISTEMA</button>
+        <button class="btn-login" onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
     </div>
 
     <div id="secao-painel" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="color: var(--s);">Painel de Controle</h2>
-            <button onclick="location.reload()" style="width: auto; padding: 5px 10px; font-size: 0.7rem;">Sair</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2 style="color: var(--s); margin: 0;">Painel de Matrículas</h2>
+            <button onclick="location.reload()" style="width: auto; padding: 5px 15px; background: #444; color: white;">Sair</button>
         </div>
 
         <div class="card">
-            <h4>Matricular Novo Aluno</h4>
-            <input type="text" id="aluno-nome" placeholder="Nome do Aluno">
+            <h4 style="margin:0 0 10px 0;">Cadastrar Novo Aluno</h4>
+            <input type="text" id="aluno-nome" placeholder="Nome Completo">
             <input type="text" id="aluno-cpf" placeholder="CPF">
-            <input type="number" id="aluno-valor" placeholder="Valor Mensalidade">
-            <button class="btn-add" onclick="cadastrar()">SALVAR MATRÍCULA</button>
+            <input type="text" id="aluno-telefone" placeholder="Telefone / WhatsApp">
+            <input type="number" id="aluno-valor" placeholder="Valor da Mensalidade (R$)">
+            <button class="btn-add" onclick="cadastrar()">FINALIZAR MATRÍCULA</button>
         </div>
 
-        <table>
-            <thead>
-                <tr><th>Aluno</th><th>Permanência</th><th>Valor</th></tr>
-            </thead>
-            <tbody id="lista-alunos"></tbody>
-        </table>
+        <div class="card" style="padding: 0; overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aluno / Contato</th>
+                        <th>Tempo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-alunos"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
+    // URL DO SEU NGROK
     const API_URL = 'https://2e7415640551.ngrok-free.app/api.php';
-    const headers = { 'ngrok-skip-browser-warning': 'true' };
+    const bypassHeaders = { 'ngrok-skip-browser-warning': 'true' };
 
-    // 1. FUNÇÃO DE LOGIN
     async function fazerLogin() {
         const nome = document.getElementById('adm-nome').value;
         const cpf = document.getElementById('adm-cpf').value;
@@ -68,65 +78,64 @@
         fd.append('cpf', cpf);
 
         try {
-            const r = await fetch(`${API_URL}?action=login`, { method: 'POST', body: fd, headers });
+            const r = await fetch(`${API_URL}?action=login`, { method: 'POST', body: fd, headers: bypassHeaders });
             const res = await r.json();
 
             if (res.status === 'success') {
                 document.getElementById('secao-login').classList.add('hidden');
                 document.getElementById('secao-painel').classList.remove('hidden');
-                listar(); // Só busca os alunos após o login
+                listar();
             } else {
-                erro.innerText = "Acesso negado: Nome ou CPF incorretos.";
+                erro.innerText = "Credenciais incorretas!";
             }
-        } catch (e) {
-            alert("Erro de conexão com o servidor.");
-        }
+        } catch (e) { alert("Erro ao conectar com o servidor."); }
     }
 
-    // 2. FUNÇÃO LISTAR
     async function listar() {
         const corpo = document.getElementById('lista-alunos');
         try {
-            const r = await fetch(`${API_URL}?action=listar_alunos`, { headers });
+            const r = await fetch(`${API_URL}?action=listar_alunos`, { headers: bypassHeaders });
             const res = await r.json();
             if (res.status === 'success') {
                 corpo.innerHTML = res.data.map(a => `
                     <tr>
-                        <td>${a.nome}<br><small>${a.cpf}</small></td>
-                        <td>${a.meses_na_academia} meses</td>
-                        <td style="color: var(--s)">R$ ${a.mensalidade}</td>
+                        <td>
+                            <strong>${a.nome}</strong><br>
+                            <small>${a.cpf}</small><br>
+                            <a class="phone-link" href="https://wa.me/55${a.telefone.replace(/\D/g,'')}" target="_blank">📞 ${a.telefone}</a>
+                        </td>
+                        <td><span style="background:#333; padding:3px 8px; border-radius:10px;">${a.meses_na_academia}m</span></td>
+                        <td style="color: var(--s); font-weight:bold;">R$ ${a.mensalidade}</td>
                     </tr>
                 `).join('');
             }
-        } catch (e) { console.error("Erro ao listar"); }
+        } catch (e) { console.error("Erro na listagem"); }
     }
 
-    // 3. FUNÇÃO CADASTRAR
     async function cadastrar() {
         const nome = document.getElementById('aluno-nome').value;
         const cpf = document.getElementById('aluno-cpf').value;
+        const telefone = document.getElementById('aluno-telefone').value;
         const valor = document.getElementById('aluno-valor').value;
 
-        if(!nome || !cpf || !valor) return alert("Preencha todos os campos");
+        if(!nome || !cpf || !telefone || !valor) return alert("Preencha todos os campos!");
 
         const fd = new FormData();
         fd.append('nome', nome);
         fd.append('cpf', cpf);
+        fd.append('telefone', telefone);
         fd.append('valor', valor);
 
         try {
-            const r = await fetch(`${API_URL}?action=cadastrar_aluno`, { method: 'POST', body: fd, headers });
+            const r = await fetch(`${API_URL}?action=cadastrar_aluno`, { method: 'POST', body: fd, headers: bypassHeaders });
             const res = await r.json();
             if (res.status === 'success') {
-                alert("Sucesso!");
-                document.getElementById('aluno-nome').value = '';
-                document.getElementById('aluno-cpf').value = '';
-                document.getElementById('aluno-valor').value = '';
+                alert("Aluno cadastrado com sucesso!");
+                ['aluno-nome', 'aluno-cpf', 'aluno-telefone', 'aluno-valor'].forEach(id => document.getElementById(id).value = '');
                 listar();
             }
-        } catch (e) { alert("Erro ao salvar."); }
+        } catch (e) { alert("Erro ao cadastrar."); }
     }
 </script>
 </body>
 </html>
-
