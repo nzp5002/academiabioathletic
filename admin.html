@@ -11,224 +11,86 @@
     <style>
         :root {
             --primary: #FF3B3B;
-            --primary-dark: #D32F2F;
+            --success: #28a745;
+            --warning: #ffc107;
             --bg: #050505;
             --card-bg: #111111;
-            --input-bg: #0A0A0A;
             --text: #FFFFFF;
             --text-dim: #A0A0A0;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --border: rgba(255, 255, 255, 0.05);
         }
 
+        /* Mantendo seu estilo base e adicionando classes de status */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; }
         
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            min-height: 100vh;
-            background-image: radial-gradient(circle at 50% -20%, #251010 0%, #050505 80%);
-        }
-
-        header {
-            background: rgba(17, 17, 17, 0.8);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            padding: 25px;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--text);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        header { background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px); text-align: center; padding: 25px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         header span { color: var(--primary); }
 
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .container { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
 
-        /* LOGIN CARD */
-        .login-box {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            max-width: 420px;
-            margin: 60px auto;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-        .login-box h2 { margin-bottom: 30px; font-weight: 800; font-size: 1.8rem; }
-        .login-box input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            border: 1px solid #222;
-            background: var(--input-bg);
-            color: var(--text);
-            transition: var(--transition);
-        }
-        .login-box input:focus { border-color: var(--primary); outline: none; background: #000; }
-        .login-box button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 800;
-            background: var(--primary);
-            color: #fff;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: var(--transition);
-        }
+        .login-box { background: var(--card-bg); padding: 40px; border-radius: 24px; max-width: 420px; margin: 60px auto; text-align: center; border: 1px solid var(--border); }
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; background: #000; border: 1px solid #222; color: #fff; }
+        .login-box button { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: 800; cursor: pointer; }
 
-        /* DASHBOARD PANEL */
-        .panel { 
-            display: none; 
-            background: var(--card-bg); 
-            padding: 30px; 
-            border-radius: 24px; 
-            border: 1px solid var(--border);
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .panel { display: none; background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); }
 
-        .panel h2 { margin-bottom: 25px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .panel h2::before { content: ''; width: 5px; height: 25px; background: var(--primary); border-radius: 10px; }
+        /* Estilo da Tabela e Status */
+        .table-wrapper { border-radius: 16px; overflow-x: auto; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: #1a1a1a; padding: 18px; text-align: left; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; }
+        td { padding: 18px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 
-        /* FILTROS MODERNOS */
-        .filter-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.02);
-            padding: 20px;
-            border-radius: 16px;
-        }
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+        .badge-pago { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .badge-pendente { background: rgba(255, 59, 59, 0.2); color: #FF3B3B; }
 
-        .input-with-icon {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .input-with-icon i {
-            position: absolute;
-            left: 15px;
-            color: var(--primary);
-            font-size: 0.9rem;
-        }
-        .input-with-icon input {
-            width: 100%;
-            padding: 12px 15px 12px 40px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            background: var(--input-bg);
-            color: #fff;
-            outline: none;
-            transition: var(--transition);
-        }
-        .input-with-icon input:focus { border-color: var(--primary); }
+        .valor-acumulado { display: block; font-weight: 800; color: var(--primary); }
+        .valor-base { font-size: 0.7rem; color: var(--text-dim); text-decoration: line-through; }
 
-        .filter-group button { 
-            padding: 12px;
-            border-radius: 10px;
-            background: #222; 
-            border: none; 
-            color: white;
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: var(--transition);
-        }
-        .filter-group button#btnFiltrar { background: var(--primary); }
-        .filter-group button:hover { transform: translateY(-2px); filter: brightness(1.2); }
-
-        /* TABELA */
-        .table-wrapper { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; background: #111; }
-        th { background: #1a1a1a; padding: 18px; text-align: left; font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; }
-        td { padding: 18px; border-bottom: 1px solid var(--border); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-
-        .btnApagar {
-            padding: 8px 12px;
-            border-radius: 8px;
-            background: rgba(255, 85, 85, 0.1);
-            color: #ff5555;
-            border: 1px solid #ff5555;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .btnApagar { padding: 8px 12px; border-radius: 8px; background: none; color: #ff5555; border: 1px solid #ff5555; cursor: pointer; transition: 0.2s; }
         .btnApagar:hover { background: #ff5555; color: #fff; }
 
-        #btnApagarSelecionados {
-            padding: 12px 24px;
-            border-radius: 12px;
-            background: transparent;
-            color: #ff5555;
-            border: 1px solid #ff5555;
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        @media(max-width: 768px) {
-            .filter-group { grid-template-columns: 1fr; }
-        }
+        .filter-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .filter-group input { padding: 12px; border-radius: 10px; background: #000; border: 1px solid #333; color: #fff; }
     </style>
 </head>
 <body>
 
-<header>Bio<span>Athletic</span> - Gestão Estratégica</header>
+<header>Bio<span>Athletic</span> - Admin Financeiro</header>
 
 <div class="container">
-
     <div class="login-box" id="loginBox">
-        <i class="fas fa-user-shield" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
-        <h2>Acesso Restrito</h2>
+        <h2>Acesso Administrativo</h2>
         <input type="text" id="adminNome" placeholder="Usuário">
         <input type="text" id="adminCpf" placeholder="CPF">
-        <input type="password" id="adminSenha" placeholder="Senha de Acesso">
-        <button id="btnLogin">Autenticar Sistema</button>
-        <div id="loginStatus" style="margin-top:15px"></div>
+        <input type="password" id="adminSenha" placeholder="Senha">
+        <button id="btnLogin">Entrar no Sistema</button>
+        <div id="loginStatus" style="margin-top:10px"></div>
     </div>
 
     <div class="panel" id="adminPanel">
-        <h2>Listagem de Alunos Ativos</h2>
-
         <div class="filter-group">
-            <div class="input-with-icon">
-                <i class="fas fa-search"></i>
-                <input type="text" id="filterNome" placeholder="Buscar por nome...">
-            </div>
-            <div class="input-with-icon">
-                <i class="fas fa-dollar-sign"></i>
-                <input type="number" id="filterValor" placeholder="Mensalidade (R$)">
-            </div>
-            <div class="input-with-icon">
-                <i class="fas fa-calendar-alt"></i>
-                <input type="number" id="filterMeses" placeholder="Tempo (Meses)">
-            </div>
-            <button id="btnFiltrar"><i class="fas fa-filter"></i> Filtrar</button>
-            <button id="btnLimparFiltro"><i class="fas fa-redo"></i> Resetar</button>
+            <input type="text" id="filterNome" placeholder="🔍 Buscar por Nome...">
+            <select id="filterStatus" style="padding: 12px; border-radius: 10px; background: #000; border: 1px solid #333; color: #fff;">
+                <option value="">Todos os Status</option>
+                <option value="pago">Somente Pagos</option>
+                <option value="pendente">Somente Pendentes</option>
+            </select>
+            <button id="btnLimpar" style="background: #222; color: #fff; border: none; border-radius: 10px; cursor: pointer;">Resetar Filtros</button>
         </div>
-
-        <button id="btnApagarSelecionados"><i class="fas fa-trash-alt"></i> Excluir Selecionados</button>
 
         <div class="table-wrapper">
             <table id="alunosTable">
                 <thead>
                     <tr>
-                        <th style="width: 50px;"><input type="checkbox" id="selectAll"></th>
-                        <th>Nome do Aluno</th>
-                        <th>CPF</th>
+                        <th>Aluno</th>
                         <th>Contato</th>
-                        <th>Mensalidade</th>
-                        <th>Permanência</th>
-                        <th>Gerenciar</th>
+                        <th>Status</th>
+                        <th>Meses</th>
+                        <th>Mensalidade Base</th>
+                        <th>Total Acumulado</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -241,117 +103,90 @@
     const API_URL = 'https://apiphp-production-bce2.up.railway.app';
     let alunosData = [];
 
-    // LOGIN
+    // Login (com o campo senha atualizado na sua API)
     document.getElementById('btnLogin').addEventListener('click', async () => {
-        const nome = document.getElementById('adminNome').value.trim();
-        const cpf = document.getElementById('adminCpf').value.trim();
-        const senha = document.getElementById('adminSenha').value;
-
         const fd = new FormData();
-        fd.append('nome', nome);
-        fd.append('cpf', cpf);
-        fd.append('senha', senha);
+        fd.append('nome', document.getElementById('adminNome').value);
+        fd.append('cpf', document.getElementById('adminCpf').value);
+        fd.append('senha', document.getElementById('adminSenha').value);
 
         try {
-            const res = await fetch(`${API_URL}?action=login`, { method:'POST', body:fd });
+            const res = await fetch(`${API_URL}?action=login`, { method: 'POST', body: fd });
             const data = await res.json();
-            if(data.status==='success') {
-                document.getElementById('loginBox').style.display='none';
-                document.getElementById('adminPanel').style.display='block';
+            if(data.status === 'success') {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
                 carregarAlunos();
             } else {
-                const status = document.getElementById('loginStatus');
-                status.innerText='Credenciais inválidas';
-                status.style.color='#ff5555';
+                document.getElementById('loginStatus').innerText = 'Erro: ' + data.message;
+                document.getElementById('loginStatus').style.color = 'red';
             }
-        } catch(err){ alert('Erro ao conectar com API.'); }
+        } catch(e) { alert('Erro na conexão.'); }
     });
 
-    // CARREGAR DADOS
-    async function carregarAlunos(){
-        try{
-            const res = await fetch(`${API_URL}?action=listar_alunos`);
-            const data = await res.json();
-            alunosData = data.data || [];
-            renderTable(alunosData);
-        } catch(err){ console.error('Erro ao carregar alunos'); }
+    async function carregarAlunos() {
+        const res = await fetch(`${API_URL}?action=listar_alunos`);
+        const json = await res.json();
+        alunosData = json.data || [];
+        renderTable(alunosData);
     }
 
-    // RENDERIZAR TABELA
-    function renderTable(data){
+    function renderTable(data) {
         const tbody = document.querySelector('#alunosTable tbody');
-        tbody.innerHTML='';
-        data.forEach(aluno=>{
+        tbody.innerHTML = '';
+
+        data.forEach(aluno => {
+            const isPendente = aluno.status === 'pendente';
             const tr = document.createElement('tr');
-            tr.innerHTML=`
-                <td><input type="checkbox" class="selectAluno" data-cpf="${aluno.cpf}"></td>
-                <td style="font-weight:600">${aluno.nome}</td>
-                <td style="color:#666">${aluno.cpf}</td>
+            
+            tr.innerHTML = `
+                <td><b>${aluno.nome}</b><br><small style="color:#666">${aluno.cpf}</small></td>
                 <td>${aluno.telefone}</td>
-                <td style="color:var(--primary); font-weight:700">R$ ${parseFloat(aluno.mensalidade).toFixed(2)}</td>
-                <td><span style="background:#222; padding:4px 10px; border-radius:20px; font-size:0.8rem">${aluno.meses_na_academia} meses</span></td>
-                <td><button class="btnApagar" data-cpf="${aluno.cpf}"><i class="fas fa-trash"></i></button></td>
+                <td><span class="badge ${isPendente ? 'badge-pendente' : 'badge-pago'}">${aluno.status}</span></td>
+                <td>${aluno.meses_total} m</td>
+                <td>R$ ${aluno.mensalidade_base.toFixed(2)}</td>
+                <td>
+                    ${isPendente ? `<span class="valor-base">R$ ${aluno.mensalidade_base.toFixed(2)}</span>` : ''}
+                    <span class="valor-acumulado">R$ ${aluno.valor_total_devido.toFixed(2)}</span>
+                </td>
+                <td>
+                    <button class="btnApagar" onclick="deletarAluno('${aluno.cpf}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
     }
 
-    // LÓGICA DE FILTROS
-    function aplicarFiltros() {
-        const nomeBusca = document.getElementById('filterNome').value.toLowerCase().trim();
-        const valor = parseFloat(document.getElementById('filterValor').value);
-        const meses = parseInt(document.getElementById('filterMeses').value);
-        
-        let filtered = alunosData.filter(aluno => {
-            const matchNome = aluno.nome.toLowerCase().includes(nomeBusca);
-            const matchValor = isNaN(valor) || parseFloat(aluno.mensalidade) === valor;
-            const matchMeses = isNaN(meses) || parseInt(aluno.meses_na_academia) === meses;
-            return matchNome && matchValor && matchMeses;
-        });
-
-        renderTable(filtered);
-    }
-
-    document.getElementById('filterNome').addEventListener('input', aplicarFiltros);
-    document.getElementById('btnFiltrar').addEventListener('click', aplicarFiltros);
-    
-    document.getElementById('btnLimparFiltro').addEventListener('click', ()=>{
-        document.getElementById('filterNome').value='';
-        document.getElementById('filterValor').value='';
-        document.getElementById('filterMeses').value='';
+    // Filtros
+    document.getElementById('filterNome').addEventListener('input', filtrar);
+    document.getElementById('filterStatus').addEventListener('change', filtrar);
+    document.getElementById('btnLimpar').addEventListener('click', () => {
+        document.getElementById('filterNome').value = '';
+        document.getElementById('filterStatus').value = '';
         renderTable(alunosData);
     });
 
-    // EXCLUSÃO
-    document.addEventListener('click', async (e)=>{
-        const btn = e.target.closest('.btnApagar');
-        if(btn){
-            if(!confirm('Excluir este aluno?')) return;
-            await apagarAlunos([btn.dataset.cpf]);
-            carregarAlunos();
-        }
-    });
-
-    document.getElementById('btnApagarSelecionados').addEventListener('click', async ()=>{
-        const selecionados = Array.from(document.querySelectorAll('.selectAluno:checked')).map(chk=>chk.dataset.cpf);
-        if(selecionados.length===0) return alert('Selecione alguém.');
-        if(!confirm(`Excluir ${selecionados.length} alunos?`)) return;
-        await apagarAlunos(selecionados);
-        carregarAlunos();
-    });
-
-    async function apagarAlunos(cpfs){
-        for(const cpf of cpfs){
-            const fd = new FormData();
-            fd.append('cpf', cpf);
-            await fetch(`${API_URL}?action=apagar_aluno`, { method:'POST', body:fd });
-        }
+    function filtrar() {
+        const nome = document.getElementById('filterNome').value.toLowerCase();
+        const status = document.getElementById('filterStatus').value;
+        
+        const filtered = alunosData.filter(a => {
+            const mNome = a.nome.toLowerCase().includes(nome);
+            const mStatus = status === '' || a.status === status;
+            return mNome && mStatus;
+        });
+        renderTable(filtered);
     }
 
-    document.getElementById('selectAll').addEventListener('change', (e)=>{
-        document.querySelectorAll('.selectAluno').forEach(chk=> chk.checked = e.target.checked);
-    });
+    async function deletarAluno(cpf) {
+        if(!confirm('Deseja realmente excluir este registro?')) return;
+        const fd = new FormData();
+        fd.append('cpf', cpf);
+        await fetch(`${API_URL}?action=apagar_aluno`, { method: 'POST', body: fd });
+        carregarAlunos();
+    }
 </script>
-
 </body>
 </html>
