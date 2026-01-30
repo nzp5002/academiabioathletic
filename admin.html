@@ -7,113 +7,136 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --primary: #FF3B3B;
-        --bg: #0A0A0A;
-        --card-bg: #161616;
-        --text: #FFFFFF;
-        --accent: #FF3B3B;
-        --hover: rgba(255,59,59,0.2);
-        --transition: all 0.3s ease;
-    }
+:root {
+    --primary: #FF3B3B;
+    --bg: #0A0A0A;
+    --card-bg: #161616;
+    --text: #FFF;
+    --hover: rgba(255,59,59,0.2);
+    --transition: all 0.3s ease;
+}
 
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
-    body { background: var(--bg); color: var(--text); }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
+body { background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    header {
-        background: var(--card-bg);
-        text-align: center;
-        padding: 25px 20px;
-        font-size: 1.8rem;
-        font-weight: 900;
-        color: var(--primary);
-        letter-spacing: 1px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
+header {
+    background: var(--card-bg);
+    text-align: center;
+    padding: 20px;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
 
-    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
 
-    /* LOGIN */
-    .login-box {
-        background: var(--card-bg);
-        padding: 40px 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px var(--hover);
-        max-width: 400px;
-        margin: 0 auto 50px auto;
-        text-align: center;
-        transition: var(--transition);
-    }
-    .login-box h2 { margin-bottom: 25px; font-weight: 900; color: var(--primary); }
-    .login-box input {
-        width: 100%;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        border: 1px solid #222;
-        background: #0f0f0f;
-        color: var(--text);
-        font-size: 1rem;
-        transition: 0.3s;
-    }
-    .login-box input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); outline:none; }
-    .login-box button {
-        background: var(--primary);
-        color: #fff;
-        font-weight: 700;
-        padding: 15px;
-        border-radius: 12px;
-        border: none;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .login-box button:hover { filter: brightness(1.2); }
-    #loginStatus { margin-top: 15px; font-weight: 600; }
+/* LOGIN */
+.login-box {
+    background: var(--card-bg);
+    padding: 30px 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px var(--hover);
+    max-width: 400px;
+    margin: 0 auto 40px auto;
+    text-align: center;
+}
+.login-box h2 { margin-bottom: 20px; color: var(--primary); font-weight: 900; }
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #222;
+    background: #0f0f0f;
+    color: var(--text);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+.login-box input:focus { border-color: var(--primary); outline:none; box-shadow:0 0 8px var(--primary);}
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border:none;
+    font-weight: 700;
+    background: var(--primary);
+    color:#fff;
+    cursor:pointer;
+    transition: var(--transition);
+}
+.login-box button:hover { filter: brightness(1.2); }
+#loginStatus { margin-top: 10px; font-weight:600; }
 
-    /* PAINEL ADMIN */
-    .panel { display: none; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px var(--hover); }
-    .panel h2 { text-align: center; margin-bottom: 30px; color: var(--primary); font-weight: 900; }
+/* PAINEL */
+.panel { display:none; background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px var(--hover); }
+.panel h2 { text-align:center; margin-bottom:20px; color: var(--primary); }
 
-    .filter-group { display:flex; flex-wrap:wrap; gap:15px; margin-bottom: 20px; }
-    .filter-group input { flex:1; padding:12px; border-radius:10px; border:1px solid #222; background:#0f0f0f; color:#fff; }
-    .filter-group button { flex:0 0 150px; padding:12px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-weight:700; cursor:pointer; transition:0.3s; }
-    .filter-group button:hover { filter:brightness(1.2); }
+/* FILTROS */
+.filter-group {
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:15px;
+}
+.filter-group input, .filter-group select, .filter-group button {
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #222;
+    background:#0f0f0f;
+    color:#fff;
+    font-size:0.95rem;
+}
+.filter-group button {
+    flex:0 0 120px;
+    background: var(--primary);
+    font-weight:700;
+    border:none;
+    cursor:pointer;
+}
+.filter-group button:hover { filter: brightness(1.2); }
 
-    #btnApagarSelecionados {
-        margin-bottom: 15px;
-        padding:12px;
-        border-radius:12px;
-        background: #ff5555;
-        color:#fff;
-        font-weight:700;
-        border:none;
-        cursor:pointer;
-        transition:0.3s;
-    }
-    #btnApagarSelecionados:hover { filter: brightness(1.2); }
+#btnApagarSelecionados {
+    padding:10px;
+    border-radius:10px;
+    background:#ff5555;
+    font-weight:700;
+    border:none;
+    cursor:pointer;
+    margin-bottom:10px;
+}
+#btnApagarSelecionados:hover { filter: brightness(1.2); }
 
-    table { width:100%; border-collapse:collapse; margin-top:15px; }
-    th, td { padding:12px; text-align:left; border-bottom:1px solid #222; }
-    th { background:#1a1a1a; font-weight:700; }
-    tr:hover { background:#222; }
-    .checkbox-cell { text-align:center; }
-    .btnApagar {
-        padding:6px 12px;
-        border:none;
-        border-radius:8px;
-        background:#ff5555;
-        color:#fff;
-        cursor:pointer;
-        font-weight:600;
-        transition:0.3s;
-    }
-    .btnApagar:hover { filter: brightness(1.2); }
+/* TABELA RESPONSIVA */
+.table-wrapper { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; min-width:600px; }
+th, td { padding:10px; text-align:left; border-bottom:1px solid #222; font-size:0.95rem; }
+th { background:#1a1a1a; font-weight:700; }
+tr:hover { background:#222; }
+.checkbox-cell { text-align:center; }
+.btnApagar {
+    padding:5px 10px;
+    border:none;
+    border-radius:8px;
+    background:#ff5555;
+    color:#fff;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.3s;
+}
+.btnApagar:hover { filter: brightness(1.2); }
 
-    /* RESPONSIVO */
-    @media (max-width:768px){
-        .filter-group { flex-direction: column; }
-        .filter-group button { width: 100%; }
-    }
+/* RESPONSIVO */
+@media(max-width:768px){
+    .filter-group { flex-direction: column; }
+    .filter-group button { width: 100%; }
+    .login-box { padding:20px 15px; }
+}
 </style>
 </head>
 <body>
@@ -145,20 +168,22 @@
 
         <button id="btnApagarSelecionados">Apagar Selecionados</button>
 
-        <table id="alunosTable">
-            <thead>
-                <tr>
-                    <th class="checkbox-cell"><input type="checkbox" id="selectAll"></th>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>Telefone</th>
-                    <th>Mensalidade (R$)</th>
-                    <th>Meses na Academia</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="table-wrapper">
+            <table id="alunosTable">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="selectAll"></th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>Mensalidade (R$)</th>
+                        <th>Meses na Academia</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
 </div>
