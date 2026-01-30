@@ -1,1 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia - Acesso Restrito</title>
+    <style>
+        :root { --p: #007bff; --s: #28a745; --bg: #121212; --c: #1e1e1e; --t: #eee; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--t); padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .card { background: var(--c); padding: 20px; border-radius: 8px; border: 1px solid #333; margin-bottom: 20px; }
+        input { width: 100%; padding: 10px; margin: 8px 0; background: #2c2c2c; border: 1px solid #444; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-login { background: var(--p); color: white; }
+        .btn-add { background: var(--s); color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        .hidden { display: none; }
+        .error { color: #ff4444; font-size: 0.9rem; margin-bottom: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="secao-login" class="card">
+        <h2 style="text-align: center; color: var(--p);">Login ADM</h2>
+        <div id="login-erro" class="error"></div>
+        <input type="text" id="adm-nome" placeholder="Nome do Administrador">
+        <input type="text" id="adm-cpf" placeholder="CPF do Administrador">
+        <button class="btn-login" onclick="fazerLogin()">ACESSAR SISTEMA</button>
+    </div>
+
+    <div id="secao-painel" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="color: var(--s);">Painel de Controle</h2>
+            <button onclick="location.reload()" style="width: auto; padding: 5px 10px; font-size: 0.7rem;">Sair</button>
+        </div>
+
+        <div class="card">
+            <h4>Matricular Novo Aluno</h4>
+            <input type="text" id="aluno-nome" placeholder="Nome do Aluno">
+            <input type="text" id="aluno-cpf" placeholder="CPF">
+            <input type="number" id="aluno-valor" placeholder="Valor Mensalidade">
+            <button class="btn-add" onclick="cadastrar()">SALVAR MATRÍCULA</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>Aluno</th><th>Permanência</th><th>Valor</th></tr>
+            </thead>
+            <tbody id="lista-alunos"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://2e7415640551.ngrok-free.app/api.php';
+    const headers = { 'ngrok-skip-browser-warning': 'true' };
+
+    // 1. FUNÇÃO DE LOGIN
+    async function fazerLogin() {
+        const nome = document.getElementById('adm-nome').value;
+        const cpf = document.getElementById('adm-cpf').value;
+        const erro = document.getElementById('login-erro');
+
+        const fd = new FormData();
+        fd.append('nome', nome);
+        fd.append('cpf', cpf);
+
+        try {
+            const r = await fetch(`${API_URL}?action=login`, { method: 'POST', body: fd, headers });
+            const res = await r.json();
+
+            if (res.status === 'success') {
+                document.getElementById('secao-login').classList.add('hidden');
+                document.getElementById('secao-painel').classList.remove('hidden');
+                listar(); // Só busca os alunos após o login
+            } else {
+                erro.innerText = "Acesso negado: Nome ou CPF incorretos.";
+            }
+        } catch (e) {
+            alert("Erro de conexão com o servidor.");
+        }
+    }
+
+    // 2. FUNÇÃO LISTAR
+    async function listar() {
+        const corpo = document.getElementById('lista-alunos');
+        try {
+            const r = await fetch(`${API_URL}?action=listar_alunos`, { headers });
+            const res = await r.json();
+            if (res.status === 'success') {
+                corpo.innerHTML = res.data.map(a => `
+                    <tr>
+                        <td>${a.nome}<br><small>${a.cpf}</small></td>
+                        <td>${a.meses_na_academia} meses</td>
+                        <td style="color: var(--s)">R$ ${a.mensalidade}</td>
+                    </tr>
+                `).join('');
+            }
+        } catch (e) { console.error("Erro ao listar"); }
+    }
+
+    // 3. FUNÇÃO CADASTRAR
+    async function cadastrar() {
+        const nome = document.getElementById('aluno-nome').value;
+        const cpf = document.getElementById('aluno-cpf').value;
+        const valor = document.getElementById('aluno-valor').value;
+
+        if(!nome || !cpf || !valor) return alert("Preencha todos os campos");
+
+        const fd = new FormData();
+        fd.append('nome', nome);
+        fd.append('cpf', cpf);
+        fd.append('valor', valor);
+
+        try {
+            const r = await fetch(`${API_URL}?action=cadastrar_aluno`, { method: 'POST', body: fd, headers });
+            const res = await r.json();
+            if (res.status === 'success') {
+                alert("Sucesso!");
+                document.getElementById('aluno-nome').value = '';
+                document.getElementById('aluno-cpf').value = '';
+                document.getElementById('aluno-valor').value = '';
+                listar();
+            }
+        } catch (e) { alert("Erro ao salvar."); }
+    }
+</script>
+</body>
+</html>
 
