@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioAthletic - Premium Performance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF3B3B;
+            --primary-glow: rgba(255, 59, 59, 0.4);
+            --bg: #0A0A0A;
+            --card-bg: #161616;
+            --text: #FFFFFF;
+            --text-dim: #b3b3b3;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        header {
+            position: fixed; top:0; width:100%; z-index:1000;
+            padding:20px; background: rgba(10,10,10,0.8); backdrop-filter: blur(10px);
+            display:flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-size:1.5rem; font-weight:900; text-transform: uppercase; color:white; text-decoration:none; }
+        .logo span { color: var(--primary); }
+        .menu-icon { font-size:1.5rem; cursor:pointer; z-index:1100; transition: var(--transition); }
+
+        .nav-menu {
+            position: fixed; top:0; right:-100%; width:300px; height:100vh;
+            background: rgba(22,22,22,0.95); backdrop-filter: blur(15px);
+            display:flex; flex-direction:column; padding:100px 40px;
+            transition: var(--transition); z-index:1050; border-left:1px solid rgba(255,255,255,0.1);
+        }
+        .nav-menu.active { right:0; }
+        .nav-menu a { color:white; text-decoration:none; font-size:1.2rem; font-weight:700; margin-bottom:30px; display:flex; align-items:center; gap:15px; transition:0.3s; }
+        .nav-menu a i { color: var(--primary); width:25px; }
+
+        #home { height:80vh; display:flex; align-items:center; justify-content:center; text-align:center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80');
+            background-size: cover; background-position: center;
+        }
+        .hero-content h1 { font-size: clamp(2.5rem,8vw,5rem); font-weight:900; line-height:1; }
+        .hero-content span { color: var(--primary); text-shadow:0 0 20px var(--primary-glow); }
+
+        .section-title { text-align:center; padding:60px 20px 20px; font-size:2rem; text-transform:uppercase; }
+        .plans-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:25px; padding:40px 20px; max-width:1200px; margin:0 auto; }
+        .plan-card { background: var(--card-bg); border-radius:20px; padding:40px; text-align:center; border:1px solid rgba(255,255,255,0.05); opacity:0; transform: translateY(30px); transition: var(--transition); }
+        .plan-card.show { opacity:1; transform: translateY(0); }
+        .plan-price { font-size:3rem; font-weight:900; margin:20px 0; color: var(--primary); }
+
+        #matricula { padding:80px 20px; }
+        .form-container { max-width:550px; margin:0 auto; background: var(--card-bg); padding:50px; border-radius:30px; box-shadow:0 30px 60px rgba(0,0,0,0.5); }
+        .form-group { margin-bottom:20px; position:relative; }
+        .form-group i { position:absolute; left:15px; top:18px; color: var(--primary); }
+        input, select { width:100%; padding:18px 15px 18px 45px; background:#0f0f0f; border:1px solid #222; color:white; border-radius:12px; font-size:1rem; }
+        .btn-submit { width:100%; padding:20px; background: var(--primary); border:none; color:white; font-weight:900; text-transform:uppercase; border-radius:12px; cursor:pointer; }
+        .status-msg { margin-bottom:20px; font-weight:700; display:none; text-align:center; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo">Bio<span>Athletic</span></a>
+    <div class="menu-icon" id="menuBtn"><i class="fas fa-bars"></i></div>
+</header>
+
+<nav class="nav-menu" id="navMenu">
+    <a href="#home"><i class="fas fa-home"></i> Início</a>
+    <a href="#planos"><i class="fas fa-tags"></i> Planos</a>
+    <a href="#matricula"><i class="fas fa-user-plus"></i> Matricular-se</a>
+</nav>
+
+<section id="home">
+    <div class="hero-content">
+        <h1>TREINE NO <span>LIMITE</span></h1>
+        <p>O futuro da sua performance começa aqui.</p>
+    </div>
+</section>
+
+<h2 class="section-title" id="planos">Nossos <span>Planos</span></h2>
+<div class="plans-grid">
+    <div class="plan-card"><h3>BIO START</h3><div class="plan-price">R$ 89<span>,90</span></div><p>Mensal</p></div>
+    <div class="plan-card" style="border-top:5px solid var(--primary)"><h3>BIO PRO</h3><div class="plan-price">R$ 129<span>,90</span></div><p>Trimestral</p></div>
+    <div class="plan-card"><h3>BIO ELITE</h3><div class="plan-price">R$ 199<span>,90</span></div><p>Anual</p></div>
+</div>
+
+<section id="matricula">
+    <div class="form-container">
+        <h2 style="text-align:center; margin-bottom:30px;">MATRÍCULA <span>PREMIUM</span></h2>
+        <div id="status" class="status-msg"></div>
+        <form id="formMatricula">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="nome" placeholder="Nome Completo" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-id-card"></i>
+                <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="telefone" placeholder="(00) 00000-0000" maxlength="15" autocomplete="tel" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-calendar-alt"></i>
+                <select id="plano" required>
+                    <option value="">Selecione a Permanência</option>
+                    <option value="1">Mensal (30 dias) - R$ 89,90</option>
+                    <option value="3">Trimestral (90 dias) - R$ 129,90</option>
+                    <option value="12">Anual (Bissexto-Safe) - R$ 199,90</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">Finalizar Agora</button>
+        </form>
+    </div>
+</section>
+
+<script>
+// MENU MOBILE
+const menuBtn = document.getElementById('menuBtn');
+const navMenu = document.getElementById('navMenu');
+menuBtn.addEventListener('click', ()=> {
+    navMenu.classList.toggle('active');
+    menuBtn.innerHTML = navMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+});
+
+// MÁSCARAS
+document.getElementById('cpf').addEventListener('input', e=>{
+    let x=e.target.value.replace(/\D/g,'').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
+    e.target.value = !x[2]? x[1]: x[1]+'.'+x[2]+(x[3]?'.'+x[3]:'')+(x[4]?'-'+x[4]:'');
+});
+document.getElementById('telefone').addEventListener('input', e=>{
+    let x=e.target.value.replace(/\D/g,'').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+    e.target.value = !x[2]? x[1]: '('+x[1]+') '+x[2]+(x[3]?'-'+x[3]:'');
+});
+
+// LÓGICA DE PERMANÊNCIA (BISSEXTO)
+function calcularDataVencimento(meses) {
+    const hoje = new Date();
+    // O JavaScript lida nativamente com bissextos ao usar setMonth
+    hoje.setMonth(hoje.getMonth() + parseInt(meses));
+    return hoje.toLocaleDateString('pt-BR');
+}
+
+// ENVIO DO FORMULÁRIO
+const API_URL = 'http://127.0.0.1:8080/api.php';
+
+document.getElementById('formMatricula').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const status = document.getElementById('status');
+    const meses = document.getElementById('plano').value;
+    const dataVencimento = calcularDataVencimento(meses);
+    
+    status.style.display = 'block';
+    status.style.color = '#FF3B3B';
+    status.innerText = `Calculando vigência (Vence em: ${dataVencimento})...`;
+
+    const fd = new FormData();
+    fd.append('nome', document.getElementById('nome').value);
+    fd.append('cpf', document.getElementById('cpf').value.replace(/\D/g,''));
+    fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g,''));
+    fd.append('meses_permanencia', meses);
+    fd.append('data_vencimento', dataVencimento);
+
+    try {
+        const response = await fetch(`${API_URL}?action=cadastrar_aluno`, {
+            method: 'POST',
+            body: fd
+        });
+
+        const res = await response.json();
+        if(res.status === 'success'){
+            status.innerText = `✅ SUCESSO! Vencimento em ${dataVencimento}`;
+            status.style.color = '#28a745';
+            document.getElementById('formMatricula').reset();
+        } else {
+            status.innerText = '❌ ' + (res.message || 'Erro ao cadastrar.');
+        }
+    } catch(err){
+        status.innerText = '❌ Servidor offline. Tente novamente.';
+    }
+});
+
+// ANIMAÇÃO DE CARDS
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
+}, {threshold: 0.2});
+document.querySelectorAll('.plan-card').forEach(card => observer.observe(card));
+</script>
+
+</body>
+</html>

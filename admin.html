@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioAthletic | Painel Administrativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary:#ff3b3b; --success:#00e676; --bg:#0a0a0a; --card:#161616; --border:rgba(255,255,255,.06); --text:#fff; }
+        * { box-sizing:border-box; font-family: 'Montserrat', sans-serif; }
+        body { margin:0; background:var(--bg); color:var(--text); }
+        header { padding:20px; background:var(--card); border-bottom:2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 0; font-size: 1.4rem; font-weight: 900; }
+        header span { color:var(--primary) }
+        .btn-logout { background: rgba(255,255,255,0.05); border: 1px solid #444; color: #888; padding: 8px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-logout:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .container { max-width:1200px; margin:auto; padding:20px }
+        .panel-box { background:var(--card); padding:20px; border-radius:16px; border:1px solid var(--border); margin-bottom:20px; }
+        .grid-inputs { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; }
+        input, select { width:100%; padding:12px; background:#000; border:1px solid #333; border-radius:10px; color:#fff; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .actions { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px; }
+        .actions button { padding:12px 20px; border-radius:10px; font-weight:800; border:none; cursor:pointer; color:#fff; }
+        .btn-pay { background:var(--success) }
+        .btn-fine { background:#ffa500; }
+        .btn-del { background:transparent; border:1px solid var(--primary); color:var(--primary) }
+        .table-box { background:var(--card); border-radius:20px; overflow-x:auto; border:1px solid var(--border); }
+        table { width:100%; border-collapse:collapse; min-width: 900px; }
+        th, td { padding:16px; text-align:left }
+        th { color:var(--primary); font-size:.75rem; text-transform:uppercase; }
+        tr:not(:last-child) td { border-bottom:1px solid var(--border) }
+        .status { padding:5px 12px; border-radius:6px; font-size:.7rem; font-weight:800; text-transform: uppercase; }
+        .pago { background:rgba(0,230,118,.15); color:var(--success) }
+        .pendente { background:rgba(255,59,59,.15); color:var(--primary) }
+        .circle { width:36px; height:36px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; border:none; margin-right:5px; color:#fff; transition: 0.3s; }
+        .circle.pay { background:var(--success) }
+        .circle.fine { background:#ffa500; }
+        .circle.del { background:rgba(255,59,59,0.1); color:var(--primary); border: 1px solid var(--primary); }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; display: none; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+<div id="loading-overlay">
+    <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary)"></i>
+    <div style="margin-top:15px; color:var(--primary); font-weight:700;">PROCESSANDO...</div>
+</div>
+
+<header>
+    <h1>BIO<span>ATHLETIC</span> | ADMIN</h1>
+    <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+</header>
+
+<div class="container">
+    
+    <div class="panel-box" style="border-left: 4px solid var(--primary);">
+        <h3 style="margin-top:0; font-size: 0.85rem;"><i class="fas fa-bell"></i> CONFIGURAR RECEBIMENTO DE NOTIFICAÇÕES</h3>
+        <p style="font-size: 0.75rem; color: #888; margin-bottom: 15px;">Insira os seus dados para receber alertas de segurança e logins no Telegram ou Discord.</p>
+        <div class="grid-inputs">
+            <div>
+                <label style="font-size: 0.65rem; color: var(--primary); font-weight: 700;">TELEGRAM ID</label>
+                <input type="text" id="cfgTelegram" placeholder="Ex: 12345678">
+            </div>
+            <div>
+                <label style="font-size: 0.65rem; color: var(--primary); font-weight: 700;">DISCORD WEBHOOK URL</label>
+                <input type="text" id="cfgDiscord" placeholder="https://discord.com/api/webhooks/...">
+            </div>
+            <button onclick="salvarConfig()" class="btn-pay" style="margin-top: 18px;"><i class="fas fa-save"></i> ATUALIZAR</button>
+        </div>
+    </div>
+
+    <div class="panel-box">
+        <div class="grid-inputs">
+            <input id="fNome" placeholder="Filtrar Aluno..." oninput="filtrar()">
+            <input id="fCpf" placeholder="Filtrar CPF..." oninput="filtrar()">
+            <select id="fStatus" onchange="filtrar()">
+                <option value="">Status: Todos</option>
+                <option value="pago">Pago</option>
+                <option value="pendente">Pendente</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="actions">
+        <div>
+            <button class="btn-pay" onclick="acaoLote('pago')">Marcar Pago</button>
+            <button class="btn-fine" onclick="acaoLote('multa')">Aplicar Multa</button>
+            <button class="btn-del" onclick="acaoLote('excluir')">Excluir</button>
+        </div>
+        <strong id="stats" style="color: var(--primary)">Carregando...</strong>
+    </div>
+
+    <div class="table-box">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkMaster" onclick="toggleAll(this)"></th>
+                    <th>ALUNO</th>
+                    <th>CPF</th>
+                    <th>MENSALIDADE</th>
+                    <th>STATUS</th>
+                    <th>DÍVIDA</th>
+                    <th>AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody id="lista"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const API = "http://127.0.0.1:8080/api.php";
+let DADOS = [];
+
+const getToken = () => localStorage.getItem("bio_token");
+if (!getToken()) window.location.href = "login.html";
+
+async function carregar() {
+    try {
+        const r = await fetch(API + "?action=listar_alunos", {
+            headers: { "Authorization": getToken() }
+        });
+        if (r.status === 401) return logout();
+        const j = await r.json();
+        
+        // 1. Renderiza alunos
+        DADOS = j.data || [];
+        render(DADOS);
+
+        // 2. Preenche os campos de notificação com os valores que o PHP enviou no login ou numa nova rota
+        // Vamos assumir que criamos uma rota 'meu_perfil' para pegar os valores atuais
+        const rPerfil = await fetch(API + "?action=meu_perfil", {
+            headers: { "Authorization": getToken() }
+        });
+        const jPerfil = await rPerfil.json();
+        if(jPerfil.success) {
+            document.getElementById("cfgTelegram").value = jPerfil.dados.telegram_id || '';
+            document.getElementById("cfgDiscord").value = jPerfil.dados.discord_webhook || '';
+        }
+
+    } catch (e) { console.error(e); }
+}
+
+async function salvarConfig() {
+    const telegram = document.getElementById("cfgTelegram").value;
+    const discord = document.getElementById("cfgDiscord").value;
+    
+    document.getElementById("loading-overlay").style.display = "flex";
+    
+    const fd = new FormData();
+    fd.append('telegram_id', telegram);
+    fd.append('discord_webhook', discord);
+
+    const res = await fetch(API + "?action=salvar_config", {
+        method: "POST",
+        body: fd,
+        headers: { "Authorization": getToken() }
+    });
+
+    document.getElementById("loading-overlay").style.display = "none";
+    if(res.ok) alert("Notificações atualizadas!");
+}
+
+async function logout() {
+    const token = getToken();
+    if(token) {
+        await fetch(API + "?action=logout", { method: "POST", headers: { "Authorization": token } }).catch(()=>{});
+    }
+    localStorage.removeItem("bio_token");
+    window.location.href = "login.html";
+}
+
+function render(lista){
+    const tb = document.getElementById("lista");
+    tb.innerHTML = "";
+    lista.forEach(a=>{
+        tb.innerHTML += `
+        <tr>
+            <td><input type="checkbox" class="aluno-check" data-cpf="${a.cpf}"></td>
+            <td><b>${a.nome}</b></td>
+            <td>${a.cpf}</td>
+            <td>R$ ${parseFloat(a.mensalidade_base).toFixed(2)}</td>
+            <td><span class="status ${a.status}">${a.status}</span></td>
+            <td>R$ ${parseFloat(a.valor_total_devido).toFixed(2)}</td>
+            <td>
+                <button class="circle pay" onclick="pagar('${a.cpf}')"><i class="fas fa-dollar-sign"></i></button>
+                <button class="circle del" onclick="excluir('${a.cpf}')"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>`;
+    });
+    document.getElementById("stats").innerText = lista.length + " ALUNOS";
+}
+
+// Funções básicas (pagar, excluir, filtrar...) omitidas para brevidade, mas devem ser mantidas
+async function pagar(cpf) { 
+    const fd = new FormData(); fd.append('cpf', cpf); fd.append('novo_status', 'pago');
+    await fetch(API + "?action=atualizar_status", { method: "POST", body: fd, headers: { "Authorization": getToken() } });
+    carregar();
+}
+
+async function excluir(cpf) { 
+    if(!confirm("Excluir?")) return;
+    const fd = new FormData(); fd.append('cpf', cpf);
+    await fetch(API + "?action=apagar_aluno", { method: "POST", body: fd, headers: { "Authorization": getToken() } });
+    carregar();
+}
+
+function filtrar(){
+    const n = document.getElementById("fNome").value.toLowerCase();
+    const c = document.getElementById("fCpf").value.toLowerCase();
+    const s = document.getElementById("fStatus").value;
+    const f = DADOS.filter(a => a.nome.toLowerCase().includes(n) && a.cpf.includes(c) && (!s || a.status === s));
+    render(f);
+}
+
+carregar();
+</script>
+</body>
+</html>
+
