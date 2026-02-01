@@ -280,8 +280,11 @@
         <p class="copyright">&copy; 2026 BioAthletic. Todos os direitos reservados.</p>
     </div>
 </footer>
-
 <script>
+// CONFIGURAÇÕES GERAIS
+const API_URL = 'https://apiphp-production-c674.up.railway.app/';
+const RECAPTCHA_SITE_KEY = '6LenVF0sAAAAAA03pAPAyFLR1AMKM1BDGhl9R8Ft';
+
 // MENU MOBILE
 const menuBtn = document.getElementById('menuBtn');
 const navMenu = document.getElementById('navMenu');
@@ -299,13 +302,13 @@ menuOverlay.addEventListener('click', toggleMenu);
 navLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
 // MÁSCARAS
-document.getElementById('cpf').addEventListener('input', e=>{
-    let x = e.target.value.replace(/\D/g,'').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
-    e.target.value = !x[2] ? x[1] : x[1]+'.'+x[2]+(x[3]?'.'+x[3]:'')+(x[4]?'-'+x[4]:'');
+document.getElementById('cpf').addEventListener('input', e => {
+    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
+    e.target.value = !x[2] ? x[1] : x[1] + '.' + x[2] + (x[3] ? '.' + x[3] : '') + (x[4] ? '-' + x[4] : '');
 });
-document.getElementById('telefone').addEventListener('input', e=>{
-    let x = e.target.value.replace(/\D/g,'').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-    e.target.value = !x[2] ? x[1] : '('+x[1]+') '+x[2]+(x[3]?'-'+x[3]:'');
+document.getElementById('telefone').addEventListener('input', e => {
+    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+    e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
 });
 
 // DATA DE VENCIMENTO
@@ -315,10 +318,8 @@ function calcularDataVencimento(meses) {
     return hoje.toLocaleDateString('pt-BR');
 }
 
-// ENVIO DO FORMULÁRIO
-const API_URL = 'https://apiphp-production-c674.up.railway.app/';
-
-document.getElementById('formMatricula').addEventListener('submit', async e=>{
+// ENVIO DO FORMULÁRIO COM RECAPTCHA V3
+document.getElementById('formMatricula').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const status = document.getElementById('status');
@@ -327,61 +328,57 @@ document.getElementById('formMatricula').addEventListener('submit', async e=>{
 
     status.style.display = 'block';
     status.style.color = '#FF3B3B';
-    status.innerText = `Calculando vigência (Vence em: ${dataVencimento})...`;
+    status.innerText = "Validando segurança...";
 
-    const fd = new FormData();
-    fd.append('nome', document.getElementById('nome').value);
-    fd.append('cpf', document.getElementById('cpf').value.replace(/\D/g,''));
-    fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g,''));
-    fd.append('meses_permanencia', meses);
-    fd.append('data_vencimento', dataVencimento);
+    // Aciona o reCAPTCHA
+    grecaptcha.ready(function() {
+        grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then(async function(token) {
+            
+            const fd = new FormData();
+            fd.append('nome', document.getElementById('nome').value);
+            fd.append('cpf', document.getElementById('cpf').value.replace(/\D/g, ''));
+            fd.append('telefone', document.getElementById('telefone').value.replace(/\D/g, ''));
+            fd.append('meses_permanencia', meses);
+            fd.append('data_vencimento', dataVencimento);
+            fd.append('recaptcha_token', token); // <--- O TOKEN VAI AQUI
 
-    try {
-        const response = await fetch(`${API_URL}?action=cadastrar_aluno`, {
-            method: 'POST',
-            body: fd
+            try {
+                const response = await fetch(`${API_URL}?action=cadastrar_aluno`, {
+                    method: 'POST',
+                    body: fd
+                });
+
+                const res = await response.json();
+
+                if (res.success === true || res.status === 'success') {
+                    status.innerText = `✅ SUCESSO! Vencimento em ${dataVencimento}`;
+                    status.style.color = '#28a745';
+                    document.getElementById('formMatricula').reset();
+                } else if (res.message && /cadastrado/i.test(res.message)) {
+                    status.innerText = `⚠️ Aluno já cadastrado. Vencimento em ${dataVencimento}`;
+                    status.style.color = '#FFC107';
+                } else {
+                    status.innerText = '❌ ' + (res.message || 'Erro ao cadastrar.');
+                    status.style.color = '#FF3B3B';
+                }
+            } catch (err) {
+                status.innerText = '❌ Servidor offline ou erro de conexão.';
+                status.style.color = '#FF3B3B';
+            }
         });
-
-        const res = await response.json();
-
-        if (res.success === true || res.success === 'true' || res.success === 1) {
-            status.innerText = `✅ SUCESSO! Vencimento em ${dataVencimento}`;
-            status.style.color = '#28a745';
-            document.getElementById('formMatricula').reset();
-
-        } else if (res.message && /cadastrado/i.test(res.message)) {
-            status.innerText = `⚠️ Aluno já cadastrado. Vencimento em ${dataVencimento}`;
-            status.style.color = '#FFC107';
-
-        } else {
-            status.innerText = '❌ ' + (res.message || 'Erro ao cadastrar.');
-            status.style.color = '#FF3B3B';
-        }
-
-    } catch (err) {
-        status.innerText = '❌ Servidor offline ou erro de conexão.';
-        status.style.color = '#FF3B3B';
-    }
+    });
 });
 
 // ANIMAÇÃO DOS CARDS
 const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-        if(entry.isIntersecting) entry.target.classList.add('show');
+        if (entry.isIntersecting) entry.target.classList.add('show');
     });
-}, {threshold: 0.2});
+}, { threshold: 0.2 });
 
 document.querySelectorAll('.plan-card').forEach(card => observer.observe(card));
 </script>
-   <script>
-      function onClick(e) {
-        e.preventDefault();
-        grecaptcha.ready(function() {
-          grecaptcha.execute('6LenVF0sAAAAAA03pAPAyFLR1AMKM1BDGhl9R8Ft', {action: 'submit'}).then(function(token) {
-              // Add your logic to submit to your backend server here.
-          });
-        });
-      }
-   </script>
+
+
 </body>
 </html>
