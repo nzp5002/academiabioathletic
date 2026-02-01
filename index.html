@@ -174,7 +174,7 @@ document.getElementById('formMatricula').addEventListener('submit', async e=>{
         });
 
         const res = await response.json();
-        if (res.success === true || res.status === 'success') {
+        if (res.success === true) {
             status.innerText = `✅ SUCESSO! Vencimento em ${dataVencimento}`;
             status.style.color = '#28a745';
             document.getElementById('formMatricula').reset();
