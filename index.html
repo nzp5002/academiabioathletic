@@ -374,7 +374,7 @@ document.getElementById('formMatricula').addEventListener('submit', async e=>{
         const res = await response.json();
 
         // ✔️ TRATAMENTO ROBUSTO
-        if (res.status === true || res.status === 'true' || res.status === 1) {
+        if (res.success === true || res.success === 'true' || res.success === 1) {
             status.innerText = `✅ SUCESSO! Vencimento em ${dataVencimento}`;
             status.style.color = '#28a745';
             document.getElementById('formMatricula').reset();
