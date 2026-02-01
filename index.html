@@ -7,8 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="https://825bc6be2944.ngrok-free.app/1000681456.ico" type="image/x-icon">
-    <meta property="og:image" content="https://825bc6be2944.ngrok-free.app/kkk.jpg">
     <style>
         :root {
             --primary: #FF3B3B;
@@ -160,7 +158,7 @@
         .plan-features li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
         .plan-features li i { color: var(--primary); min-width: 20px; }
 
-        /* ESTILOS DA MATRÍCULA (PRESERVADOS E MELHORADOS VISUALMENTE APENAS) */
+        /* ESTILOS DA MATRÃCULA (PRESERVADOS E MELHORADOS VISUALMENTE APENAS) */
         #matricula { padding:80px 20px; background: linear-gradient(to top, #000, var(--bg)); }
         .form-container { max-width:550px; margin:0 auto; background: var(--card-bg); padding:50px; border-radius:30px; box-shadow:0 30px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
         .form-group { margin-bottom:20px; position:relative; }
@@ -198,7 +196,7 @@
         /* Responsividade Mobile */
         @media (max-width: 768px) {
             header { padding: 15px 20px; }
-            #home { height: 100dvh; min-height: 550px; } /* Altura dinâmica para mobile */
+            #home { height: 100dvh; min-height: 550px; } /* Altura dinÃ¢mica para mobile */
             .hero-content h1 { font-size: clamp(2.5rem, 12vw, 4rem); }
             .plans-grid { grid-template-columns: 1fr; padding: 20px; gap: 40px; } /* Empilha cards */
             .plan-card { padding: 40px 20px; }
@@ -217,7 +215,7 @@
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <nav class="nav-menu" id="navMenu">
-    <a href="#home"><i class="fas fa-home"></i> Início</a>
+    <a href="#home"><i class="fas fa-home"></i> Inicio</a>
     <a href="#planos"><i class="fas fa-tags"></i> Planos</a>
     <a href="#matricula"><i class="fas fa-user-plus"></i> Matricular-se</a>
 </nav>
@@ -225,52 +223,31 @@
 <section id="home">
     <div class="hero-content">
         <h1>TREINE NO <span>LIMITE</span></h1>
-        <p>O futuro da sua performance começa aqui. Equipamentos de ponta e ambiente exclusivo.</p>
-        <a href="#matricula" class="cta-button">Começar Agora</a>
+        <p>O futuro da sua performance começa aqui.</p>
+        <a href="#matricula" class="cta-button">Começa Agora</a>
     </div>
 </section>
 
 <h2 class="section-title" id="planos">Nossos <span>Planos</span></h2>
 <div class="plans-grid">
-    <div class="plan-card">
-        <h3>BIO START</h3>
-        <div class="plan-price">R$ 89<span>,90</span></div>
-        <p>Mensal</p>
-        <ul class="plan-features">
-            <li><i class="fas fa-check"></i> Acesso total à musculação</li>
-            <li><i class="fas fa-check"></i> Sem taxa de cancelamento</li>
-            <li><i class="fas fa-check"></i> App de treino básico</li>
         </ul>
     </div>
     <div class="plan-card" style="border: 1px solid var(--primary); box-shadow: 0 0 20px rgba(255,59,59,0.2);">
         <div style="position:absolute; top:0; right:0; background:var(--primary); padding:5px 15px; font-size:0.8rem; font-weight:bold;">POPULAR</div>
         <h3>BIO PRO</h3>
-        <div class="plan-price">R$ 129<span>,90</span></div>
+        <div class="plan-price">R$ 60<span>,00</span></div>
         <p>Trimestral</p>
         <ul class="plan-features">
-            <li><i class="fas fa-check"></i> Tudo do plano Start</li>
-            <li><i class="fas fa-check"></i> Acesso a aulas coletivas</li>
-            <li><i class="fas fa-check"></i> Avaliação física inclusa</li>
-            <li><i class="fas fa-check"></i> Convite para amigo (1x/mês)</li>
+            <li><i class="fas fa-check"></i> Acesso total aos aparelhos</li>
+            <li><i class="fas fa-check"></i> Apoio dos intrutores</li>
+            <li><i class="fas fa-check"></i> Ambiente tranquilo</li>
+            <li><i class="fas fa-check"></i> Avaliação física</li>
         </ul>
     </div>
-    <div class="plan-card">
-        <h3>BIO ELITE</h3>
-        <div class="plan-price">R$ 199<span>,90</span></div>
-        <p>Anual</p>
-        <ul class="plan-features">
-            <li><i class="fas fa-check"></i> Acesso VIP 24h</li>
-            <li><i class="fas fa-check"></i> Personal Trainer (1x/mês)</li>
-            <li><i class="fas fa-check"></i> Kit BioAthletic exclusivo</li>
-            <li><i class="fas fa-check"></i> Nutricionista online</li>
-        </ul>
-    </div>
-</div>
-
-<!-- SEÇÃO MATRÍCULA (ESTRUTURA PRESERVADA) -->
+<!-- SEÃ‡ÃƒO MATRÃCULA (ESTRUTURA PRESERVADA) -->
 <section id="matricula">
     <div class="form-container">
-        <h2 style="text-align:center; margin-bottom:30px;">MATRÍCULA <span>PREMIUM</span></h2>
+        <h2 style="text-align:center; margin-bottom:30px;">MATRíCULA <span></span></h2>
         <div id="status" class="status-msg"></div>
         <form id="formMatricula">
             <div class="form-group">
@@ -289,9 +266,7 @@
                 <i class="fas fa-calendar-alt"></i>
                 <select id="plano" required>
                     <option value="">Selecione a Permanência</option>
-                    <option value="1">Mensal (30 dias) - R$ 89,90</option>
-                    <option value="3">Trimestral (90 dias) - R$ 129,90</option>
-                    <option value="12">Anual (Bissexto-Safe) - R$ 199,90</option>
+                    <option value="1">Mensal (30 dias) - R$ 60,00</option>                 
                 </select>
             </div>
             <button type="submit" class="btn-submit">Finalizar Agora</button>
@@ -302,16 +277,16 @@
 <footer>
     <div class="footer-content">
         <a href="#" class="footer-logo">Bio<span>Athletic</span></a>
-        <p class="footer-tagline">Performance, saúde e evolução. O seu próximo nível começa agora.</p>
+        <p class="footer-tagline"> O seu proximo nivel começa agora.</p>
         <div class="social-icons">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/academiabioathleticofc?igsh=cWZtNm5oNTRjbXJi"><i class="fab fa-instagram"></i></a>
             <a href="#"><i class="fab fa-whatsapp"></i></a>
         </div>
         <p class="copyright">&copy; 2026 BioAthletic. Todos os direitos reservados.</p>
     </div>
 </footer>
 
+<!-- SCRIPTS (LÃ“GICA PRESERVADA) -->
 <script>
 // MENU MOBILE
 const menuBtn = document.getElementById('menuBtn');
@@ -327,38 +302,40 @@ function toggleMenu() {
 
 menuBtn.addEventListener('click', toggleMenu);
 menuOverlay.addEventListener('click', toggleMenu);
-navLinks.forEach(link => link.addEventListener('click', toggleMenu));
+navLinks.forEach(link => {
+    link.addEventListener('click', toggleMenu);
+});
 
-// MÁSCARAS
+// MÃSCARAS
 document.getElementById('cpf').addEventListener('input', e=>{
-    let x = e.target.value.replace(/\D/g,'').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
-    e.target.value = !x[2] ? x[1] : x[1]+'.'+x[2]+(x[3]?'.'+x[3]:'')+(x[4]?'-'+x[4]:'');
+    let x=e.target.value.replace(/\D/g,'').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
+    e.target.value = !x[2]? x[1]: x[1]+'.'+x[2]+(x[3]?'.'+x[3]:'')+(x[4]?'-'+x[4]:'');
 });
 document.getElementById('telefone').addEventListener('input', e=>{
-    let x = e.target.value.replace(/\D/g,'').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-    e.target.value = !x[2] ? x[1] : '('+x[1]+') '+x[2]+(x[3]?'-'+x[3]:'');
+    let x=e.target.value.replace(/\D/g,'').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+    e.target.value = !x[2]? x[1]: '('+x[1]+') '+x[2]+(x[3]?'-'+x[3]:'');
 });
 
-// DATA DE VENCIMENTO
+// LÃ“GICA DE PERMANÃŠNCIA (BISSEXTO)
 function calcularDataVencimento(meses) {
     const hoje = new Date();
+    // O JavaScript lida nativamente com bissextos ao usar setMonth
     hoje.setMonth(hoje.getMonth() + parseInt(meses));
     return hoje.toLocaleDateString('pt-BR');
 }
 
-// ENVIO DO FORMULÁRIO
-const API_URL = 'https://apiphp-production-c674.up.railway.app/';
+// ENVIO DO FORMULÃRIO
+const API_URL = 'https://apiphp-production-bce2.up.railway.app/';
 
 document.getElementById('formMatricula').addEventListener('submit', async e=>{
     e.preventDefault();
-
     const status = document.getElementById('status');
     const meses = document.getElementById('plano').value;
     const dataVencimento = calcularDataVencimento(meses);
-
+    
     status.style.display = 'block';
     status.style.color = '#FF3B3B';
-    status.innerText = `Calculando vigência (Vence em: ${dataVencimento})...`;
+    status.innerText = `Calculando vigÃªncia (Vence em: ${dataVencimento})...`;
 
     const fd = new FormData();
     fd.append('nome', document.getElementById('nome').value);
@@ -374,37 +351,24 @@ document.getElementById('formMatricula').addEventListener('submit', async e=>{
         });
 
         const res = await response.json();
-
-        // ✅ TRATAMENTO ROBUSTO
-        if (res.success === true || res.success === 'true' || res.success === 1) {
-            status.innerText = `✅ SUCESSO! Vencimento em ${dataVencimento}`;
+        if(res.status === 'success'){
+            status.innerText = `âœ… SUCESSO! Vencimento em ${dataVencimento}`;
             status.style.color = '#28a745';
             document.getElementById('formMatricula').reset();
-
-        } else if (res.message && /cadastrado/i.test(res.message)) {
-            status.innerText = `⚠️ Aluno já cadastrado. Vencimento em ${dataVencimento}`;
-            status.style.color = '#FFC107';
-
         } else {
-            status.innerText = '❌ ' + (res.message || 'Erro ao cadastrar.');
-            status.style.color = '#FF3B3B';
+            status.innerText = 'erro ' + (res.message || 'Erro ao cadastrar.');
         }
-
-    } catch (err) {
-        status.innerText = '❌ Servidor offline ou erro de conexão.';
-        status.style.color = '#FF3B3B';
+    } catch(err){
+        status.innerText = 'erro Servidor offline. Tente novamente.';
     }
 });
 
-// ANIMAÇÃO DOS CARDS
+// ANIMAÃ‡ÃƒO DE CARDS
 const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting) entry.target.classList.add('show');
-    });
+    entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
 }, {threshold: 0.2});
-
 document.querySelectorAll('.plan-card').forEach(card => observer.observe(card));
 </script>
 
 </body>
-</html>
+                    </html>
