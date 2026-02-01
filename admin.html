@@ -113,6 +113,11 @@ color:#fff
 
 <header>
 <h1>BIO<span>ATHLETIC</span> | ADMIN</h1>
+
+
+   <button onclick="fazerLogout()" style="background:transparent; border:1px solid var(--primary); color:var(--primary); padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:700;">
+        <i class="fas fa-sign-out-alt"></i> SAIR
+    </button>
 </header>
 
 <div class="container">
@@ -246,7 +251,26 @@ a.cpf.includes(c)&&
 function toggleAll(el){
 document.querySelectorAll(".aluno-check").forEach(c=>c.checked=el.checked);
 }
+async function fazerLogout() {
+    if (!confirm("Deseja realmente sair?")) return;
 
+    try {
+        await fetch(API + "?action=logout", {
+            method: "POST",
+            headers: { "Authorization": token }
+        });
+    } catch (e) {
+        console.log("Erro ao avisar o servidor, mas saindo localmente...");
+    }
+
+    // Limpa o token do navegador
+    localStorage.removeItem("bio_token");
+    // Manda de volta para a tela de login
+    location.href = "login.html";
+        
+}
+
+  
 carregar();
 </script>
 
