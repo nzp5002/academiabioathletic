@@ -20,6 +20,7 @@
 }
 *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
 body{margin:0;background:var(--bg);color:var(--text)}
+
 header{
 padding:20px;
 background:var(--card);
@@ -33,7 +34,9 @@ z-index:100
 }
 header h1{margin:0;font-size:1.4rem;font-weight:900}
 header span{color:var(--primary)}
+
 .container{max-width:1200px;margin:auto;padding:20px}
+
 .panel-box{
 background:var(--card);
 padding:20px;
@@ -41,11 +44,13 @@ border-radius:16px;
 border:1px solid var(--border);
 margin-bottom:20px
 }
+
 .grid-inputs{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:15px
 }
+
 input,select{
 width:100%;
 padding:12px;
@@ -54,6 +59,7 @@ border:1px solid #333;
 border-radius:10px;
 color:#fff
 }
+
 .actions{
 display:flex;
 justify-content:space-between;
@@ -62,6 +68,7 @@ flex-wrap:wrap;
 gap:10px;
 margin-bottom:15px
 }
+
 .actions button{
 padding:12px 20px;
 border-radius:10px;
@@ -70,19 +77,23 @@ border:none;
 cursor:pointer;
 color:#fff
 }
+
 .btn-pay{background:var(--success);color:#000}
 .btn-fine{background:#ffa500}
 .btn-del{background:transparent;border:1px solid var(--primary);color:var(--primary)}
+
 .table-box{
 background:var(--card);
 border-radius:20px;
 overflow-x:auto;
 border:1px solid var(--border)
 }
+
 table{width:100%;border-collapse:collapse;min-width:900px}
 th,td{padding:16px;text-align:left}
 th{color:var(--primary);font-size:.75rem;text-transform:uppercase}
 tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+
 .status{
 padding:5px 12px;
 border-radius:6px;
@@ -92,6 +103,7 @@ text-transform:uppercase
 }
 .pago{background:rgba(0,230,118,.15);color:var(--success)}
 .pendente{background:rgba(255,59,59,.15);color:var(--primary)}
+
 .circle{
 width:36px;
 height:36px;
@@ -184,7 +196,7 @@ border:1px solid var(--border)
 </table>
 </div>
 
-<!-- CAIXINHAS -->
+<!-- CARDS -->
 <div id="cardsBox" class="panel-box" style="display:none">
 <div id="cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px"></div>
 </div>
@@ -200,27 +212,30 @@ border:1px solid var(--border)
 const API="https://apiphp-production-c674.up.railway.app/";
 const token=localStorage.getItem("bio_token");
 if(!token) location.href="login.html";
+
 let DADOS=[];
 
+/* LOAD */
 async function carregar(){
-const r=await fetch(API+"?action=listar_alunos",{headers:{Authorization:"Bearer "+token}});
-const j=await r.json();
-DADOS=j.data||[];
-render(DADOS);
-renderCards(DADOS);
-gerarTree();
+    const r=await fetch(API+"?action=listar_alunos",{headers:{Authorization:"Bearer "+token}});
+    const j=await r.json();
+    DADOS=j.data||[];
+    render(DADOS);
+    renderCards(DADOS);
+    gerarTree();
 }
 
+/* VIEW */
 function mostrarTabela(){tabelaBox.style.display="block";cardsBox.style.display="none";treeBox.style.display="none";}
 function mostrarCards(){tabelaBox.style.display="none";cardsBox.style.display="block";treeBox.style.display="none";}
 function mostrarTree(){tabelaBox.style.display="none";cardsBox.style.display="none";treeBox.style.display="block";}
 
+/* TABLE */
 function render(dados){
-    const tbody = document.getElementById("lista");
-    tbody.innerHTML = "";
-
-    dados.forEach(a => {
-        tbody.innerHTML += `
+    const tbody=document.getElementById("lista");
+    tbody.innerHTML="";
+    dados.forEach(a=>{
+        tbody.innerHTML+=`
         <tr>
             <td><input type="checkbox" class="aluno-check" data-cpf="${a.cpf}"></td>
             <td><b>${a.nome}</b></td>
@@ -235,55 +250,80 @@ function render(dados){
             </td>
         </tr>`;
     });
+    stats.innerText=dados.length+" ALUNOS";
+}
 
-    document.getElementById("stats").innerText = dados.length + " ALUNOS";
-  
-
+/* CARDS */
 function renderCards(lista){
-cards.innerHTML=lista.map(a=>`
-<div class="panel-box">
-<b>${a.nome}</b><br>
-<small>${a.cpf}</small><br>
-<span class="status ${a.status}">${a.status}</span>
-<p>Mensalidade: R$ ${a.mensalidade_base}</p>
-<p>Dívida: R$ ${a.valor_total_devido}</p>
-</div>`).join("");
+    cards.innerHTML=lista.map(a=>`
+    <div class="panel-box">
+        <b>${a.nome}</b><br>
+        <small>${a.cpf}</small><br>
+        <span class="status ${a.status}">${a.status}</span>
+        <p>Mensalidade: R$ ${a.mensalidade_base}</p>
+        <p>Dívida: R$ ${a.valor_total_devido}</p>
+    </div>`).join("");
 }
 
+/* TREE */
 function gerarTree(){
-tree.innerHTML="";
-const ul=document.createElement("ul");
-const root=document.createElement("li");
-root.innerHTML=`<div class="tree-node"><i class="fas fa-users"></i> Alunos (${DADOS.length})</div>`;
-const ul2=document.createElement("ul");
+    tree.innerHTML="";
+    const ul=document.createElement("ul");
+    const root=document.createElement("li");
+    root.innerHTML=`<div class="tree-node"><i class="fas fa-users"></i> Alunos (${DADOS.length})</div>`;
+    const ul2=document.createElement("ul");
 
-DADOS.forEach(a=>{
-ul2.innerHTML+=`
-<li>
-<div class="tree-node">${a.cpf}</div>
-<ul>
-<li><div class="tree-node">${a.nome} <span class="status ${a.status}">${a.status}</span></div></li>
-</ul>
-</li>`;
-});
-root.appendChild(ul2);ul.appendChild(root);tree.appendChild(ul);
-tree.querySelectorAll("li").forEach(li=>{
-li.onclick=e=>{e.stopPropagation();const u=li.querySelector("ul");if(u)u.classList.toggle("hidden")}
-});
+    DADOS.forEach(a=>{
+        ul2.innerHTML+=`
+        <li>
+            <div class="tree-node">${a.cpf}</div>
+            <ul>
+                <li>
+                    <div class="tree-node">${a.nome}
+                    <span class="status ${a.status}">${a.status}</span>
+                    </div>
+                </li>
+            </ul>
+        </li>`;
+    });
+
+    root.appendChild(ul2);
+    ul.appendChild(root);
+    tree.appendChild(ul);
+
+    tree.querySelectorAll("li").forEach(li=>{
+        li.onclick=e=>{
+            e.stopPropagation();
+            const u=li.querySelector("ul");
+            if(u)u.classList.toggle("hidden");
+        }
+    });
 }
 
+/* FILTER */
 function filtrar(){
-const n=fNome.value.toLowerCase(),c=fCpf.value,s=fStatus.value;
-const f=DADOS.filter(a=>a.nome.toLowerCase().includes(n)&&a.cpf.includes(c)&&(!s||a.status===s));
-render(f);renderCards(f);
+    const n=fNome.value.toLowerCase();
+    const c=fCpf.value;
+    const s=fStatus.value;
+    const f=DADOS.filter(a=>
+        a.nome.toLowerCase().includes(n) &&
+        a.cpf.includes(c) &&
+        (!s||a.status===s)
+    );
+    render(f);
+    renderCards(f);
 }
 
+/* ACTIONS */
 function toggleAll(e){document.querySelectorAll(".aluno-check").forEach(c=>c.checked=e.checked);}
 async function pagar(cpf){await fetch(API+"?action=atualizar_status",{method:"POST",body:new URLSearchParams({cpf,novo_status:"pago"}),headers:{Authorization:token}});carregar();}
 async function multar(cpf){await fetch(API+"?action=aplicar_multa",{method:"POST",body:new URLSearchParams({cpf}),headers:{Authorization:token}});carregar();}
 async function excluir(cpf){await fetch(API+"?action=apagar_aluno",{method:"POST",body:new URLSearchParams({cpf}),headers:{Authorization:token}});carregar();}
-async function acaoLote(t){document.querySelectorAll(".aluno-check:checked").forEach(c=>{if(t==="pago")pagar(c.dataset.cpf);if(t==="multa")multar(c.dataset.cpf);if(t==="excluir")excluir(c.dataset.cpf);});}
+function acaoLote(t){document.querySelectorAll(".aluno-check:checked").forEach(c=>{if(t==="pago")pagar(c.dataset.cpf);if(t==="multa")multar(c.dataset.cpf);if(t==="excluir")excluir(c.dataset.cpf);});}
+
+/* LOGOUT */
 function fazerLogout(){localStorage.removeItem("bio_token");location.href="login.html";}
+
 carregar();
 </script>
 
