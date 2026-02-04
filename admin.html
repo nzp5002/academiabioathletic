@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="robots" content="noindex, nofollow">
+
 <style>
 :root{
 --primary:#ff3b3b;
@@ -19,6 +20,7 @@
 }
 *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
 body{margin:0;background:var(--bg);color:var(--text)}
+
 header{
 padding:20px;
 background:var(--card);
@@ -32,7 +34,9 @@ z-index:100
 }
 header h1{margin:0;font-size:1.4rem;font-weight:900}
 header span{color:var(--primary)}
+
 .container{max-width:1200px;margin:auto;padding:20px}
+
 .panel-box{
 background:var(--card);
 padding:20px;
@@ -40,11 +44,13 @@ border-radius:16px;
 border:1px solid var(--border);
 margin-bottom:20px
 }
+
 .grid-inputs{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:15px
 }
+
 input,select{
 width:100%;
 padding:12px;
@@ -53,6 +59,7 @@ border:1px solid #333;
 border-radius:10px;
 color:#fff
 }
+
 .actions{
 display:flex;
 justify-content:space-between;
@@ -61,6 +68,7 @@ flex-wrap:wrap;
 gap:10px;
 margin-bottom:15px
 }
+
 .actions button{
 padding:12px 20px;
 border-radius:10px;
@@ -69,19 +77,23 @@ border:none;
 cursor:pointer;
 color:#fff
 }
+
 .btn-pay{background:var(--success)}
 .btn-fine{background:#ffa500}
 .btn-del{background:transparent;border:1px solid var(--primary);color:var(--primary)}
+
 .table-box{
 background:var(--card);
 border-radius:20px;
 overflow-x:auto;
 border:1px solid var(--border)
 }
+
 table{width:100%;border-collapse:collapse;min-width:900px}
 th,td{padding:16px;text-align:left}
 th{color:var(--primary);font-size:.75rem;text-transform:uppercase}
 tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+
 .status{
 padding:5px 12px;
 border-radius:6px;
@@ -91,6 +103,7 @@ text-transform:uppercase
 }
 .pago{background:rgba(0,230,118,.15);color:var(--success)}
 .pendente{background:rgba(255,59,59,.15);color:var(--primary)}
+
 .circle{
 width:36px;
 height:36px;
@@ -106,6 +119,13 @@ color:#fff
 .circle.pay{background:var(--success)}
 .circle.fine{background:#ffa500}
 .circle.del{background:rgba(255,59,59,0.1);color:var(--primary);border:1px solid var(--primary)}
+
+/* 🌳 ÁRVORE */
+#arvore{list-style:none;padding-left:20px}
+#arvore li{margin:6px 0}
+.node{cursor:pointer;font-weight:800}
+.node span{color:var(--primary)}
+.filho{margin-left:20px;font-weight:400;opacity:.9}
 </style>
 </head>
 
@@ -113,10 +133,9 @@ color:#fff
 
 <header>
 <h1>BIO<span>ATHLETIC</span> | ADMIN</h1>
-
-<button onclick="fazerLogout()" style="background:transparent; border:1px solid var(--primary); color:var(--primary); padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:700;">
-        <i class="fas fa-sign-out-alt"></i> SAIR
-</button>   
+<button onclick="fazerLogout()" class="btn-del">
+<i class="fas fa-sign-out-alt"></i> SAIR
+</button>
 </header>
 
 <div class="container">
@@ -138,11 +157,15 @@ color:#fff
 <button class="btn-pay" onclick="acaoLote('pago')">Marcar Pago</button>
 <button class="btn-fine" onclick="acaoLote('multa')">Aplicar Multa</button>
 <button class="btn-del" onclick="acaoLote('excluir')">Excluir</button>
+<button class="btn-fine" onclick="mostrarArvore()">
+<i class="fas fa-sitemap"></i> Árvore
+</button>
 </div>
 <strong id="stats" style="color:var(--primary)">Carregando...</strong>
 </div>
 
-<div class="table-box">
+<!-- TABELA -->
+<div id="tabelaBox" class="table-box">
 <table>
 <thead>
 <tr>
@@ -159,51 +182,26 @@ color:#fff
 </table>
 </div>
 
+<!-- 🌳 ÁRVORE -->
+<div id="arvoreBox" class="panel-box" style="display:none">
+<h3 style="color:var(--primary)">📂 Estrutura em Árvore</h3>
+<ul id="arvore"></ul>
 </div>
-<div>
-   <button onclick="fazerLogout()" style="background:transparent; border:1px solid var(--primary); color:var(--primary); padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:700;">
-        <i class="fas fa-sign-out-alt"></i> SAIR
-   </button>
+
 </div>
+
 <script>
 const API="https://apiphp-production-c674.up.railway.app/";
 let DADOS=[];
 const token=localStorage.getItem("bio_token");
 if(!token) location.href="login.html";
 
-async function carregar() {
-    try {
-        const r = await fetch(API + "?action=listar_alunos", {
-            method: "GET", // Listagem geralmente é GET
-            headers: { 
-                "Authorization": "Bearer " + token, // Padrão de segurança
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (r.status === 401 || r.status === 403) {
-            alert("Sessão expirada. Faça login novamente.");
-            localStorage.removeItem("bio_token");
-            location.href = "login.html";
-            return;
-        }
-
-        const j = await r.json();
-        
-        // Verifica se a API retornou sucesso e dados
-        if (j.status === "success" || j.data) {
-            DADOS = j.data || [];
-            render(DADOS);
-        } else {
-            console.error("Erro na API:", j.message);
-            document.getElementById("stats").innerText = "Erro ao carregar dados.";
-        }
-    } catch (e) {
-        console.error("Erro de conexão:", e);
-        document.getElementById("stats").innerText = "Servidor Offline.";
-    }
+async function carregar(){
+const r=await fetch(API+"?action=listar_alunos",{headers:{Authorization:"Bearer "+token}});
+const j=await r.json();
+DADOS=j.data||[];
+render(DADOS);
 }
-
 
 function render(lista){
 const tb=document.getElementById("lista");
@@ -227,80 +225,42 @@ tb.innerHTML+=`
 document.getElementById("stats").innerText=lista.length+" ALUNOS";
 }
 
-async function pagar(cpf){
-const fd=new FormData();
-fd.append("cpf",cpf);
-fd.append("novo_status","pago");
-await fetch(API+"?action=atualizar_status",{method:"POST",body:fd,headers:{Authorization:token}});
-carregar();
-}
-
-async function multar(cpf){
-if(!confirm("Aplicar multa?"))return;
-const fd=new FormData();
-fd.append("cpf",cpf);
-await fetch(API+"?action=aplicar_multa",{method:"POST",body:fd,headers:{Authorization:token}});
-carregar();
-}
-
-async function excluir(cpf){
-if(!confirm("Excluir aluno?"))return;
-const fd=new FormData();
-fd.append("cpf",cpf);
-await fetch(API+"?action=apagar_aluno",{method:"POST",body:fd,headers:{Authorization:token}});
-carregar();
-}
-
-async function acaoLote(tipo){
-const checks=document.querySelectorAll(".aluno-check:checked");
-if(!checks.length)return alert("Selecione alunos");
-for(const c of checks){
-const cpf=c.dataset.cpf;
-const fd=new FormData();
-fd.append("cpf",cpf);
-let action="";
-if(tipo==="pago"){fd.append("novo_status","pago");action="atualizar_status";}
-if(tipo==="multa"){action="aplicar_multa";}
-if(tipo==="excluir"){action="apagar_aluno";}
-await fetch(API+"?action="+action,{method:"POST",body:fd,headers:{Authorization:token}});
-}
-carregar();
+function mostrarArvore(){
+document.getElementById("tabelaBox").style.display="none";
+const box=document.getElementById("arvoreBox");
+box.style.display="block";
+const ul=document.getElementById("arvore");
+ul.innerHTML="";
+DADOS.forEach(a=>{
+ul.innerHTML+=`
+<li>
+<div class="node"><i class="fas fa-user"></i> <span>${a.nome}</span> (${a.cpf})</div>
+<ul>
+<li class="filho">📌 Status: ${a.status}</li>
+<li class="filho">💰 Mensalidade: R$ ${Number(a.mensalidade_base).toFixed(2)}</li>
+<li class="filho">⚠ Dívida: R$ ${Number(a.valor_total_devido).toFixed(2)}</li>
+</ul>
+</li>`;
+});
 }
 
 function filtrar(){
-const n=fNome.value.toLowerCase();
-const c=fCpf.value;
-const s=fStatus.value;
 render(DADOS.filter(a=>
-a.nome.toLowerCase().includes(n)&&
-a.cpf.includes(c)&&
-(!s||a.status===s)
+a.nome.toLowerCase().includes(fNome.value.toLowerCase()) &&
+a.cpf.includes(fCpf.value) &&
+(!fStatus.value||a.status===fStatus.value)
 ));
 }
 
 function toggleAll(el){
 document.querySelectorAll(".aluno-check").forEach(c=>c.checked=el.checked);
 }
-async function fazerLogout() {
-    if (!confirm("Deseja realmente sair?")) return;
 
-    try {
-        await fetch(API + "?action=logout", {
-            method: "POST",
-            headers: { "Authorization": token }
-        });
-    } catch (e) {
-        console.log("Erro ao avisar o servidor, mas saindo localmente...");
-    }
-
-    // Limpa o token do navegador
-    localStorage.removeItem("bio_token");
-    // Manda de volta para a tela de login
-    location.href = "login.html";
-        
+async function fazerLogout(){
+localStorage.removeItem("bio_token");
+location.href="login.html";
 }
 
-  
 carregar();
 </script>
 
