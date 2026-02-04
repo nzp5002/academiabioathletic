@@ -46,24 +46,88 @@ border:1px solid var(--border);
 margin-bottom:20px
 }
 
-/* 🔲 CARDS */
-.status-section{margin-bottom:30px}
-
-.status-title{
-font-weight:900;
-font-size:1.1rem;
-margin-bottom:15px;
-display:flex;
-align-items:center;
-gap:10px
+.grid-inputs{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px
 }
 
+input,select{
+width:100%;
+padding:12px;
+background:#000;
+border:1px solid #333;
+border-radius:10px;
+color:#fff
+}
+
+.actions{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:15px
+}
+
+.actions button{
+padding:12px 20px;
+border-radius:10px;
+font-weight:800;
+border:none;
+cursor:pointer;
+color:#fff
+}
+
+.btn-pay{background:var(--success)}
+.btn-fine{background:#ffa500}
+.btn-del{background:transparent;border:1px solid var(--primary);color:var(--primary)}
+
+.table-box{
+background:var(--card);
+border-radius:20px;
+overflow-x:auto;
+border:1px solid var(--border)
+}
+
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{padding:16px;text-align:left}
+th{color:var(--primary);font-size:.75rem;text-transform:uppercase}
+tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+
+.status{
+padding:5px 12px;
+border-radius:6px;
+font-size:.7rem;
+font-weight:800;
+text-transform:uppercase
+}
+.pago{background:rgba(0,230,118,.15);color:var(--success)}
+.pendente{background:rgba(255,59,59,.15);color:var(--primary)}
+
+.circle{
+width:36px;
+height:36px;
+border-radius:50%;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+border:none;
+margin-right:5px;
+color:#fff
+}
+.circle.pay{background:var(--success)}
+.circle.fine{background:#ffa500}
+.circle.del{background:rgba(255,59,59,0.1);color:var(--primary);border:1px solid var(--primary)}
+
+/* 🔥 TREE / CAIXINHAS */
+.status-section{margin-bottom:30px}
 .cards-grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 gap:20px;
 }
-
 .card-aluno{
 background:#000;
 border:1px solid var(--border);
@@ -71,31 +135,19 @@ border-radius:18px;
 padding:18px;
 transition:.2s;
 }
-
 .card-aluno:hover{
 transform:translateY(-4px);
 border-color:var(--primary);
 }
-
-.card-header{
-font-weight:900;
-margin-bottom:5px;
-}
+.card-header{font-weight:900;margin-bottom:6px}
 .card-header span{color:var(--primary)}
-
-.card-cpf{
-font-size:.75rem;
-opacity:.6;
-margin-bottom:10px;
-}
-
+.card-cpf{font-size:.75rem;opacity:.6;margin-bottom:10px}
 .card-info{
 display:flex;
 justify-content:space-between;
 font-size:.85rem;
 margin:6px 0;
 }
-
 .badge{
 padding:4px 10px;
 border-radius:6px;
@@ -103,16 +155,8 @@ font-size:.65rem;
 font-weight:900;
 text-transform:uppercase;
 }
-
-.badge.pago{
-background:rgba(0,230,118,.15);
-color:var(--success);
-}
-
-.badge.pendente{
-background:rgba(255,59,59,.15);
-color:var(--primary);
-}
+.badge.pago{background:rgba(0,230,118,.15);color:var(--success)}
+.badge.pendente{background:rgba(255,59,59,.15);color:var(--primary)}
 </style>
 </head>
 
@@ -120,24 +164,61 @@ color:var(--primary);
 
 <header>
 <h1>BIO<span>ATHLETIC</span> | ADMIN</h1>
-<button onclick="fazerLogout()" style="background:transparent;border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:8px;font-weight:700;cursor:pointer">
+<button onclick="fazerLogout()" class="btn-del">
 <i class="fas fa-sign-out-alt"></i> SAIR
 </button>
 </header>
 
 <div class="container">
 
+<!-- FILTROS -->
 <div class="panel-box">
-<button onclick="mostrarTabela()" style="margin-right:10px">📋 Tabela</button>
-<button onclick="mostrarCardsStatus()">🧩 Caixinhas por Status</button>
+<div class="grid-inputs">
+<input id="fNome" placeholder="Filtrar Aluno..." oninput="filtrar()">
+<input id="fCpf" placeholder="Filtrar CPF..." oninput="filtrar()">
+<select id="fStatus" onchange="filtrar()">
+<option value="">Status: Todos</option>
+<option value="pago">Pago</option>
+<option value="pendente">Pendente</option>
+</select>
+</div>
 </div>
 
-<!-- 📋 TABELA (opcional, mantida) -->
-<div id="tabelaBox" class="panel-box">
-<p style="opacity:.7">Visualização em tabela (oculta quando usar caixinhas)</p>
+<!-- BOTÕES -->
+<div class="actions">
+<div>
+<button class="btn-pay" onclick="acaoLote('pago')">Marcar Pago</button>
+<button class="btn-fine" onclick="acaoLote('multa')">Aplicar Multa</button>
+<button class="btn-del" onclick="acaoLote('excluir')">Excluir</button>
+</div>
+<strong id="stats" style="color:var(--primary)">Carregando...</strong>
 </div>
 
-<!-- 🧩 CAIXINHAS -->
+<!-- TOGGLE -->
+<div class="panel-box">
+<button class="btn-pay" onclick="mostrarTabela()">📋 Tabela</button>
+<button class="btn-del" onclick="mostrarCards()">🧩 Caixinhas</button>
+</div>
+
+<!-- TABELA -->
+<div id="tabelaBox" class="table-box">
+<table>
+<thead>
+<tr>
+<th><input type="checkbox" onclick="toggleAll(this)"></th>
+<th>Aluno</th>
+<th>CPF</th>
+<th>Mensalidade</th>
+<th>Status</th>
+<th>Dívida</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
+</div>
+
+<!-- TREE -->
 <div id="cardsBox" class="panel-box" style="display:none">
 <h2 style="color:var(--primary)">📦 Alunos por Status</h2>
 <div id="cardsStatus"></div>
@@ -147,70 +228,111 @@ color:var(--primary);
 
 <script>
 const API="https://apiphp-production-c674.up.railway.app/";
+let DADOS=[];
 const token=localStorage.getItem("bio_token");
 if(!token) location.href="login.html";
-
-let DADOS=[];
 
 async function carregar(){
 const r=await fetch(API+"?action=listar_alunos",{headers:{Authorization:"Bearer "+token}});
 const j=await r.json();
 DADOS=j.data||[];
+render(DADOS);
+}
+
+function render(lista){
+const tb=document.getElementById("lista");
+tb.innerHTML="";
+lista.forEach(a=>{
+tb.innerHTML+=`
+<tr>
+<td><input type="checkbox" class="aluno-check" data-cpf="${a.cpf}"></td>
+<td><b>${a.nome}</b></td>
+<td>${a.cpf}</td>
+<td>R$ ${Number(a.mensalidade_base).toFixed(2)}</td>
+<td><span class="status ${a.status}">${a.status}</span></td>
+<td>R$ ${Number(a.valor_total_devido).toFixed(2)}</td>
+<td>
+<button class="circle pay" onclick="pagar('${a.cpf}')"><i class="fas fa-dollar-sign"></i></button>
+<button class="circle fine" onclick="multar('${a.cpf}')"><i class="fas fa-exclamation-triangle"></i></button>
+<button class="circle del" onclick="excluir('${a.cpf}')"><i class="fas fa-trash"></i></button>
+</td>
+</tr>`;
+});
+document.getElementById("stats").innerText=lista.length+" ALUNOS";
 }
 
 function mostrarTabela(){
-document.getElementById("cardsBox").style.display="none";
-document.getElementById("tabelaBox").style.display="block";
+cardsBox.style.display="none";
+tabelaBox.style.display="block";
 }
 
-function mostrarCardsStatus(){
-document.getElementById("tabelaBox").style.display="none";
-document.getElementById("cardsBox").style.display="block";
-
+function mostrarCards(){
+tabelaBox.style.display="none";
+cardsBox.style.display="block";
 const box=document.getElementById("cardsStatus");
 box.innerHTML="";
-
-const grupos={
-pago:[],
-pendente:[]
-};
-
-DADOS.forEach(a=>{
-if(grupos[a.status]) grupos[a.status].push(a);
-});
-
-for(const status in grupos){
-box.innerHTML+=`
-<div class="status-section">
-<div class="status-title">
-${status==="pago"?"💚":"🔴"} ${status.toUpperCase()} (${grupos[status].length})
-</div>
-<div class="cards-grid" id="grid-${status}"></div>
-</div>`;
-const grid=document.getElementById("grid-"+status);
-grupos[status].forEach(a=>{
-grid.innerHTML+=`
+const grupos={pago:[],pendente:[]};
+DADOS.forEach(a=>{if(grupos[a.status])grupos[a.status].push(a)});
+for(const s in grupos){
+box.innerHTML+=`<h3>${s.toUpperCase()} (${grupos[s].length})</h3><div class="cards-grid" id="g-${s}"></div>`;
+const g=document.getElementById("g-"+s);
+grupos[s].forEach(a=>{
+g.innerHTML+=`
 <div class="card-aluno">
-<div class="card-header"><i class="fas fa-user"></i> <span>${a.nome}</span></div>
+<div class="card-header"><span>${a.nome}</span></div>
 <div class="card-cpf">CPF: ${a.cpf}</div>
-
-<div class="card-info">
-<strong>Status</strong>
-<span class="badge ${a.status}">${a.status}</span>
-</div>
-
-<div class="card-info">
-<strong>Mensalidade</strong>
-<span>R$ ${Number(a.mensalidade_base).toFixed(2)}</span>
-</div>
-
-<div class="card-info">
-<strong>Dívida</strong>
-<span>R$ ${Number(a.valor_total_devido).toFixed(2)}</span>
-</div>
+<div class="card-info"><strong>Status</strong><span class="badge ${a.status}">${a.status}</span></div>
+<div class="card-info"><strong>Mensalidade</strong><span>R$ ${Number(a.mensalidade_base).toFixed(2)}</span></div>
+<div class="card-info"><strong>Dívida</strong><span>R$ ${Number(a.valor_total_devido).toFixed(2)}</span></div>
 </div>`;
 });
 }
+}
+
+function filtrar(){
+render(DADOS.filter(a=>
+a.nome.toLowerCase().includes(fNome.value.toLowerCase()) &&
+a.cpf.includes(fCpf.value) &&
+(!fStatus.value || a.status===fStatus.value)
+));
+}
+
+function toggleAll(el){
+document.querySelectorAll(".aluno-check").forEach(c=>c.checked=el.checked);
+}
+
+async function pagar(cpf){
+const fd=new FormData();fd.append("cpf",cpf);fd.append("novo_status","pago");
+await fetch(API+"?action=atualizar_status",{method:"POST",body:fd,headers:{Authorization:token}});
+carregar();
+}
+
+async function multar(cpf){
+if(!confirm("Aplicar multa?"))return;
+const fd=new FormData();fd.append("cpf",cpf);
+await fetch(API+"?action=aplicar_multa",{method:"POST",body:fd,headers:{Authorization:token}});
+carregar();
+}
+
+async function excluir(cpf){
+if(!confirm("Excluir aluno?"))return;
+const fd=new FormData();fd.append("cpf",cpf);
+await fetch(API+"?action=apagar_aluno",{method:"POST",body:fd,headers:{Authorization:token}});
+carregar();
+}
+
+async function acaoLote(tipo){
+const cks=document.querySelectorAll(".aluno-check:checked");
+if(!cks.length)return alert("Selecione alunos");
+for(const c of cks){
+const fd=new FormData();fd.append("cpf",c.dataset.cpf);
+let act="";
+if(tipo==="pago"){fd.append("novo_status","pago");act="atualizar_status";}
+if(tipo==="multa")act="aplicar_multa";
+if(tipo==="excluir")act="apagar_aluno";
+await fetch(API+"?action="+act,{method:"POST",body:fd,headers:{Authorization:token}});
+}
+carregar();
 }
 
 function fazerLogout(){
