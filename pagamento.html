@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Pagamento | BioAthletic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  background:#0a0a0a;
+  color:#fff;
+  font-family:Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.box {
+  background:#121212;
+  padding:30px;
+  border-radius:15px;
+  width:100%;
+  max-width:380px;
+  text-align:center;
+}
+input {
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+}
+button {
+  width:100%;
+  padding:15px;
+  background:#ff3b3b;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+#qr {
+  margin:20px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>PAGAMENTO PIX</h2>
+
+  <input id="cpf" placeholder="CPF">
+  <input id="telefone" placeholder="WhatsApp">
+
+  <button onclick="pagar()">GERAR QR CODE</button>
+
+  <div id="qr" style="display:none;">
+    <p>Escaneie para pagar</p>
+    <img src="pix_qr.png" width="220">
+    <button onclick="jaPaguei()">JÁ PAGUEI</button>
+  </div>
+
+  <p id="status"></p>
+</div>
+
+<script>
+const API = "https://apiphp-production-c674.up.railway.app/";
+
+let pagamentoId = null;
+
+async function pagar() {
+  document.getElementById("qr").style.display = "block";
+}
+
+async function jaPaguei() {
+  const cpf = document.getElementById("cpf").value;
+  const telefone = document.getElementById("telefone").value;
+
+  const res = await fetch(API + "?action=criar_pagamento", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cpf, telefone })
+  });
+
+  const json = await res.json();
+  pagamentoId = json.pagamento_id;
+
+  document.getElementById("status").innerText =
+    "Pagamento enviado para verificação. Aguarde liberação.";
+}
+</script>
+
+</body>
+</html>
